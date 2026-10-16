@@ -1,0 +1,21 @@
+import 'package:flutter/material.dart';
+import 'package:keyring/presentation/screens/dashboard/keyring/keyring_details_screen.dart';
+import '../../presentation/screens/auth/sign_in_screen.dart';
+import '../../presentation/screens/dashboard/keyring/keyring_screen.dart';
+
+class AppRoutes {
+  AppRoutes._();
+
+  static const String signIn = '/signin';
+  static const String keyring = '/keyrings';
+  static const String keyringDetails = '/keyring-details';
+
+  static Map<String, WidgetBuilder> routes = {
+
+    signIn: (context) => const SignInScreen(),
+
+    keyring: (context) => KeyringScreen(),
+
+    keyringDetails: (context) => const KeyringDetailsScreen(),
+  };
+}
