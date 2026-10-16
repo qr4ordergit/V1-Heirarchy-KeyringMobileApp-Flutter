@@ -8,7 +8,7 @@
 PRODUCT_NAME = keyring
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.keyring.messaging.keyring
+PRODUCT_BUNDLE_IDENTIFIER = com.keyring.messaging
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.keyring.messaging. All rights reserved.

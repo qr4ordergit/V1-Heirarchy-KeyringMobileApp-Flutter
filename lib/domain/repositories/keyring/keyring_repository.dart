@@ -7,5 +7,7 @@ abstract class KeyringRepository {
 
   Future<dynamic> getKeyringPassword({required String keyringCategoryId, required String otp});
 
+  Future<dynamic> acceptRejectKeyringRequest({required Map<String, dynamic> data});
+
 
 }

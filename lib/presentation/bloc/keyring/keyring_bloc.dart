@@ -14,6 +14,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     on<GetKeyringPasswordEvent>(_onKeyringPassword);
     on<ResetKeyringActionEvent>(_onKeyringReset);
     on<KeyringCategorySearchEvent>(_onKeyringCategorySearch);
+    on<AcceptRejectKeyringRequest>(_onAcceptRejectKeyring);
   }
 
   Future<void> _onKeyringDetails(GetKeyringDetailsEvent event, Emitter<KeyringState> emit) async {
@@ -30,7 +31,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
   void _onKeyringCategorySearch(KeyringCategorySearchEvent event, Emitter<KeyringState> emit) {
     emit(state.copyWith(searchQuery: event.query));
   }
-
 
   Future<void> _onKeyringPassword(GetKeyringPasswordEvent event, Emitter<KeyringState> emit) async {
     emit(state.copyWith(
@@ -91,6 +91,28 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       actionErrorMessage: null,
     ));
 
+  }
+
+  Future<void> _onAcceptRejectKeyring(AcceptRejectKeyringRequest event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(apiActionStatus: ApiStatus.loading));
+    try {
+      final data = {
+        "request_id": event.requestId,
+        "keyring_category_id": event.keyringCategoryId,
+        "action": event.action,  // accepted or rejected
+        "otp": event.otp
+      };
+
+      final response = await keyringRepository.acceptRejectKeyringRequest(data: data);
+
+      emit(state.copyWith(
+        apiActionStatus: ApiStatus.success,
+      ));
+
+    }catch(e) {
+      log("Error On Accept Reject otp: $e");
+      emit(state.copyWith(apiActionStatus: ApiStatus.failure, actionErrorMessage: e.toString()));
+    }
   }
 
 }

@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyring/core/config/app_config.dart';
@@ -7,11 +11,28 @@ import 'package:keyring/core/routes/app_routes.dart';
 import 'core/storage/local_storage_service.dart';
 import 'core/storage/secure_storage_service.dart';
 import 'core/theme/theme.dart';
+import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
 
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Notification On Background: $message");
+  // final notificationService = NotificationService();
+  // await notificationService.showNotification(message);
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
 
   final localStorageService = await LocalStorageService.getInstance();
   final secureStorageService = SecureStorageService.instance;
@@ -34,10 +55,23 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final String initialRoute;
 
   const MyApp({super.key, required this.initialRoute});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    // context.read<NotificationService>().notificationInitCall();
+    // log("Stored Fcm Token:\n${context.read<LocalStorageService>().getString(LocalSto.fcmToken)}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +82,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.materialLightTheme,
       darkTheme: AppTheme.materialDarkTheme,
       themeMode: ThemeMode.dark,
-      initialRoute: initialRoute,
+      initialRoute: widget.initialRoute,
       routes: AppRoutes.routes,
     );
   }

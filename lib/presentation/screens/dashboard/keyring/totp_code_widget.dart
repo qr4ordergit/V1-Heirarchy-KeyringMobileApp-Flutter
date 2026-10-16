@@ -59,7 +59,7 @@ class _TotpCodeView extends StatelessWidget {
       //           current.remainingSeconds > previous.remainingSeconds);
       // },
       listener: (context, state) {
-        log("TOTP period ended. Resetting verification status...");
+        // log("TOTP period ended. Resetting verification status...");
         context.read<KeyringBloc>().add(
           ResetKeyringActionEvent(
             keyringCategoryId: keyringCategoryId,

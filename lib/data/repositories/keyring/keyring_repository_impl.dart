@@ -33,5 +33,18 @@ class KeyringRepositoryImpl extends KeyringRepository {
     return response.data;
   }
 
+  @override
+  Future<dynamic> acceptRejectKeyringRequest({
+    required Map<String, dynamic> data,
+  }) async {
+
+    final response = await apiService.post(
+      url: ApiConstants.keyringRequestHandler,
+      data: data,
+    );
+
+    return response.data;
+  }
+
 
 }

@@ -8,6 +8,7 @@ class ApiConstants {
 
   // Keyring
   static const String keyring = "$baseUrl/keyring-login-get-catagories";
+  static const String keyringRequestHandler = "$baseUrl/2fa-action";
 
 
 }

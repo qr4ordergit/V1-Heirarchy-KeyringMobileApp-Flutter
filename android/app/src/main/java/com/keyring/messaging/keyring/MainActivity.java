@@ -1,4 +1,4 @@
-package com.keyring.messaging.keyring;
+package com.keyring.messaging;
 
 import io.flutter.embedding.android.FlutterActivity;
 

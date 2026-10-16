@@ -4,7 +4,6 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:keyring/core/common_widgets/icon_widget.dart';
 import 'package:keyring/core/config/app_config.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../data/models/keyring/keyring_model.dart';
 import '../../../bloc/keyring/keyring_state.dart';

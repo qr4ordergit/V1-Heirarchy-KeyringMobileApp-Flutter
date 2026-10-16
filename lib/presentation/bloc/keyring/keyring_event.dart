@@ -18,3 +18,17 @@ class KeyringCategorySearchEvent extends KeyringEvent {
   final String query;
   KeyringCategorySearchEvent(this.query);
 }
+
+class AcceptRejectKeyringRequest extends KeyringEvent {
+  final String keyringCategoryId;
+  final String otp;
+  final String action;
+  final String requestId;
+
+  AcceptRejectKeyringRequest({
+    required this.keyringCategoryId,
+    required this.otp,
+    required this.action,
+    required this.requestId,
+});
+}
