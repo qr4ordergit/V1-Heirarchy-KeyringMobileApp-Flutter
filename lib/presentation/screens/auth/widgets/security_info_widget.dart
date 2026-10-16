@@ -21,7 +21,7 @@ class SecurityInfoWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           IconWidget(
-            backgroundColor: Color.lerp(AppColors.green, Colors.white, 0.6),
+            backgroundColor: Color.lerp(AppColors.green, AppColors.light, 0.6),
             radius: Sizes.circularRadius,
             icon: Iconsax.shield_tick_copy, iconColor: AppColors.dark,
             paddingAll: Sizes.sm,

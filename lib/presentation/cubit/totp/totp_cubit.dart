@@ -5,7 +5,7 @@ import '../../../core/config/app_config.dart';
 import 'totp_state.dart';
 
 class TotpCubit extends Cubit<TotpState> {
-  static const int _interval = 30;
+  static const int interval = 120;
   final TotpRepository repository;
   final String secretKey;
 
@@ -27,8 +27,8 @@ class TotpCubit extends Cubit<TotpState> {
 
   void _updateOtp() {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final timeStep = now ~/ _interval;
-    final remaining = _interval - (now % _interval);
+    final timeStep = now ~/ interval;
+    final remaining = interval - (now % interval);
 
     try {
       if (secretKey.trim().isEmpty) {
@@ -43,7 +43,7 @@ class TotpCubit extends Cubit<TotpState> {
       if (_lastTimeStep != timeStep || code.isEmpty) {
         code = repository.generateCode(
           secretKey: secretKey,
-          interval: _interval,
+          interval: interval,
           digits: 6,
         );
 

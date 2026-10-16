@@ -5,7 +5,7 @@ class TotpState {
 
   const TotpState({
     this.otpCode = '',
-    this.remainingSeconds = 30,
+    this.remainingSeconds = 120,
     this.errorMessage,
   });
 }

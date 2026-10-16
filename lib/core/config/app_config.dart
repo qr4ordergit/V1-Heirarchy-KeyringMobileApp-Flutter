@@ -38,6 +38,7 @@ String verify = "Verify";
 String secure = "Your Security, Our Priority";
 String secureDes = "Protect your contact with Keyring's 2FA and TOTP security.";
 String searchKeyringCategory = "Search Keyring Category";
+String encrypted$TwoFa = "Encrypted & 2FA protected";
 String things = "";
 
 // static void snackMessage(BuildContext context, {

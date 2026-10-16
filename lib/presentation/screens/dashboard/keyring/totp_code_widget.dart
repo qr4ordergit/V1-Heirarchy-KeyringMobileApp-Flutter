@@ -1,10 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:keyring/core/common_widgets/button_widget.dart';
-import 'package:keyring/core/common_widgets/icon_widget.dart';
 import 'package:keyring/core/common_widgets/no_data_found_widget.dart';
 import 'package:keyring/core/constants/app_colors.dart';
 import 'package:keyring/core/device/device_utility.dart';
@@ -27,7 +24,7 @@ class TotpCodeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("keyringCategoryId: $keyringCategoryId || secretKey: $secretKey");
+    // log("keyringCategoryId: $keyringCategoryId || secretKey: $secretKey");
 
     return BlocProvider(
       key: ValueKey(secretKey),
@@ -55,9 +52,12 @@ class _TotpCodeView extends StatelessWidget {
 
     return BlocConsumer<TotpCubit, TotpState>(
       listenWhen: (previous, current) {
-        return previous.remainingSeconds > 0 && (current.remainingSeconds == 0 ||
-                current.remainingSeconds > previous.remainingSeconds);
+        return current.remainingSeconds > previous.remainingSeconds;
       },
+      // listenWhen: (previous, current) {
+      //   return previous.remainingSeconds > 0 && (current.remainingSeconds == 0 ||
+      //           current.remainingSeconds > previous.remainingSeconds);
+      // },
       listener: (context, state) {
         log("TOTP period ended. Resetting verification status...");
         context.read<KeyringBloc>().add(
@@ -111,7 +111,8 @@ class _TotpCodeView extends StatelessWidget {
               SizedBox(height: Sizes.sm),
 
               LinearProgressIndicator(
-                value: totpState.remainingSeconds / 30,
+                value: totpState.remainingSeconds / TotpCubit.interval,
+                // value: totpState.remainingSeconds / 120,
                 color: Colors.green,
                 backgroundColor: AppColors.greyShade,
                 minHeight: 5,

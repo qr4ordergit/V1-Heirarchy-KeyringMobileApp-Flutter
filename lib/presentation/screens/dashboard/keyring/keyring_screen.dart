@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:keyring/core/common_widgets/app_switch.dart';
 import 'package:keyring/core/common_widgets/icon_widget.dart';
 import 'package:keyring/core/common_widgets/no_data_found_widget.dart';
 import 'package:keyring/core/config/app_config.dart';
@@ -14,9 +13,6 @@ import 'package:keyring/core/storage/local_storage_service.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
-import 'package:keyring/presentation/screens/dashboard/keyring/widgets/keyring_category_passwords_widget.dart';
-
-import '../../../../core/common_widgets/app_avatar_widget.dart';
 import '../../../../core/common_widgets/text_form_field_widget.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../bloc/auth/auth_bloc.dart';
@@ -68,7 +64,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
           children: [
             Text(appName, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm - 1)),
             if(_localStorageService.getString(StorageKeys.targetUserId) != null)
-            Text(_localStorageService.getString(StorageKeys.targetUserId)!, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(_localStorageService.getString(StorageKeys.targetUserId)!, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
         ),
         actions: [
@@ -79,7 +75,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
                 Navigator.pushNamedAndRemoveUntil(
                     context,
                     AppRoutes.signIn,
-                    (route) => false
+                        (route) => false
                 );
               }
             },
@@ -148,16 +144,18 @@ class _KeyringScreenState extends State<KeyringScreen> {
                               decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
                                   // border: Border.all(color: AppColors.greyShade),
-                                borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
+                                  borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
                               ),
                               child: Column(
                                 children: [
                                   Row(
-                                    // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      AppAvatar(
-                                        fallbackText: keyring.keyringCategoryName.toString()[0].toUpperCase(),
-                                        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                                      IconWidget(
+                                        backgroundColor: keyring.twoFa == true ? Color.lerp(AppColors.green, Colors.white, 0.2) : Theme.of(context).primaryColor,
+                                        radius: Sizes.circularRadius,
+                                        icon: keyring.twoFa == true ? Iconsax.lock_copy : Iconsax.key_copy, iconColor: AppColors.dark,
+                                        paddingAll: Sizes.sm,
+                                        iconSize: Sizes.iconSm,
                                       ),
 
                                       SizedBox(width: Sizes.sm),
@@ -168,18 +166,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                           children: [
                                             Text(keyring.keyringCategoryName.toString(), maxLines: 2, overflow: TextOverflow.ellipsis,),
                                             SizedBox(height: Sizes.xs/2),
-                                            if(is2Factor)
-                                              Container(
-                                                // padding: EdgeInsets.symmetric(vertical: Sizes.xs, horizontal: Sizes.sm),
-                                                  // decoration: BoxDecoration(
-                                                  //     color: AppColors.green.withValues(alpha: 0.3),
-                                                  //     border: Border.all(color: AppColors.green),
-                                                  //     borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
-                                                  // ),
-                                                  child: Text('· $twoFaEnabled', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.green, fontSize: Sizes.fontSizeXs - 4))
-                                              )
-                                            else
-                                              Text(keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                                            Text(is2Factor ? encrypted$TwoFa: keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis,)
                                           ],
                                         ),
                                       ),
@@ -187,7 +174,6 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                     ],
                                   ),
                                   SizedBox(height: Sizes.sm),
-
                                   Align(
                                       alignment: Alignment.bottomRight,
                                       child: Text(DateFormatter.formatDate(keyring.createdOn.toString()), style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 2), maxLines: 1, overflow: TextOverflow.ellipsis,)
