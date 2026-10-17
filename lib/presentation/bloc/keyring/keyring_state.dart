@@ -1,6 +1,7 @@
 
 import 'package:keyring/core/enums/enums.dart';
 
+import '../../../core/services/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
 
 class KeyringState {
@@ -13,6 +14,12 @@ class KeyringState {
   final String? actionErrorMessage;
   final String? verifiedKeyringCategoryId;
 
+  final ApiStatus requestStatus;
+  final List<NotificationPayload> notificationPayloads;
+  final String? loadingRequestId;
+  final bool? loadingIsAccept;
+
+
   const KeyringState({
     this.apiStatus = ApiStatus.initial,
     this.errorMessage,
@@ -20,7 +27,12 @@ class KeyringState {
     this.originalKeyringData = const [],
     this.actionErrorMessage,
     this.verifiedKeyringCategoryId,
-    this.searchQuery = ""
+    this.searchQuery = "",
+    this.notificationPayloads = const [],
+    this.requestStatus = ApiStatus.initial,
+    this.loadingRequestId,
+    this.loadingIsAccept,
+
 });
 
 
@@ -42,7 +54,13 @@ class KeyringState {
     String? verifiedKeyringCategoryId,
     String? searchQuery,
 
-}) {
+    ApiStatus? requestStatus,
+    List<NotificationPayload>? notificationPayloads,
+    String? loadingRequestId,
+    bool? loadingIsAccept,
+    bool clearLoading = false,
+    
+  }) {
     return KeyringState(
       apiStatus: apiStatus ?? this.apiStatus,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -51,6 +69,17 @@ class KeyringState {
       apiActionStatus: apiActionStatus ?? this.apiActionStatus,
       actionErrorMessage: actionErrorMessage ?? this.actionErrorMessage,
       verifiedKeyringCategoryId: verifiedKeyringCategoryId ?? this.verifiedKeyringCategoryId,
+
+      notificationPayloads: notificationPayloads ?? this.notificationPayloads,
+      requestStatus: requestStatus ?? this.requestStatus,
+
+      loadingRequestId: clearLoading
+          ? null
+          : loadingRequestId ?? this.loadingRequestId,
+
+      loadingIsAccept: clearLoading
+          ? null
+          : loadingIsAccept ?? this.loadingIsAccept,
     );
   }
 }

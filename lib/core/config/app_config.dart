@@ -7,6 +7,7 @@ Color primaryColor = const Color(0xff778bff);
 
 String redirectUrl = "https://messaging.thenodeai.com/#/";
 
+String appId = "com.keyring.messaging";
 String appName = "Keyring Safe";
 String secureAccess = "Secure Access";
 String welcomeBack = "Welcome Back";
@@ -39,43 +40,7 @@ String secure = "Your Security, Our Priority";
 String secureDes = "Protect your contact with Keyring's 2FA and TOTP security.";
 String searchKeyringCategory = "Search Keyring Category";
 String encrypted$TwoFa = "Encrypted & 2FA protected";
+String newRequestDes = "You have received a new request for OTP verification under the category";
 String things = "";
 
-// static void snackMessage(BuildContext context, {
-//   String? title,
-//   required String description,
-//   IconData? icon,
-//   MessageType? messageType,
-//   int? days,
-//   bool? isDismissible = true,
-// }) {
-//   final ctx = context;
-//   // final ctx = rootNavigatorKey.currentContext ?? context; // stable, survives any sheet/route disposal
-//
-//   return DelightToastBar(
-//     builder: (context) => ToastCard(
-//       color: messageType == MessageType.error ? AppColors.red : Theme.of(context).primaryColor,
-//       leading: Icon(
-//         icon == null
-//             ? messageType == MessageType.success
-//             ? Iconsax.tick_circle
-//             : messageType == MessageType.error
-//             ? Iconsax.danger_copy
-//             : Iconsax.info_circle_copy
-//             : Iconsax.info_circle_copy,
-//         color: AppColors.light,
-//       ),
-//       title: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(title ?? message, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: Sizes.fontSizeSm, color: AppColors.light)),
-//           Text(description, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500, fontSize: Sizes.fontSizeXs, color: AppColors.light)),
-//         ],
-//       ),
-//     ),
-//     position: DelightSnackbarPosition.top,
-//     autoDismiss: isDismissible!,
-//     snackbarDuration: days == null ? const Duration(seconds: 3) : Duration(days: days),
-//   ).show(ctx);
-// }
 

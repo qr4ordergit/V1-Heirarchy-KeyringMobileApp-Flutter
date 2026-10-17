@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyring/core/enums/enums.dart';
+import 'package:keyring/core/errors/api_exceptions.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
+import '../../../core/services/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
 import 'keyring_event.dart';
 import 'keyring_state.dart';
@@ -14,8 +16,72 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     on<GetKeyringPasswordEvent>(_onKeyringPassword);
     on<ResetKeyringActionEvent>(_onKeyringReset);
     on<KeyringCategorySearchEvent>(_onKeyringCategorySearch);
+
+    on<AddNotificationPayloadEvent>(_onAddPayload);
     on<AcceptRejectKeyringRequest>(_onAcceptRejectKeyring);
   }
+
+  // Notification Section Start
+  void _onAddPayload(AddNotificationPayloadEvent event, Emitter<KeyringState> emit) {
+    final payload = event.payload;
+    if (payload.isEmpty) return;
+
+    bool isSame(NotificationPayload a, NotificationPayload b) {
+      if (a.requestId != null && b.requestId != null) {
+        return a.requestId == b.requestId;
+      }
+      return a.keyringCategoryId == b.keyringCategoryId && a.otp == b.otp;
+    }
+
+    if (state.notificationPayloads.any((e) => isSame(e, payload))) return;
+
+    emit(state.copyWith(
+      notificationPayloads: [...state.notificationPayloads, payload],
+    ));
+  }
+
+  Future<void> _onAcceptRejectKeyring(AcceptRejectKeyringRequest event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(
+        requestStatus: ApiStatus.loading,
+      loadingRequestId: event.requestId,
+      loadingIsAccept: event.action == 'accepted',
+      actionErrorMessage: null,
+    ));
+    try {
+      final data = {
+        "request_id": event.requestId,
+        "keyring_category_id": event.keyringCategoryId,
+        "action": event.action,  // accepted or rejected
+        "otp": event.otp
+      };
+
+      final response = await keyringRepository.acceptRejectKeyringRequest(data: data);
+
+
+        emit(state.copyWith(
+          requestStatus: ApiStatus.success,
+          clearLoading: true,
+          notificationPayloads: state.notificationPayloads
+              .where((e) => e.requestId != event.requestId)
+              .toList(),
+        ));
+    } on NotFoundException catch (e) {
+      log('404 NotFound ${e.message} || Response body: ${e.data}');
+      emit(state.copyWith(
+        requestStatus: ApiStatus.failure,
+        clearLoading: true,
+        actionErrorMessage: e.message,
+      ));
+    } catch (e) {
+      log('Error On Accept Reject otp: $e');
+      emit(state.copyWith(
+        requestStatus: ApiStatus.failure,
+        clearLoading: true,
+        actionErrorMessage: e.toString(),
+      ));
+    }
+  }
+  // Notification Section End
 
   Future<void> _onKeyringDetails(GetKeyringDetailsEvent event, Emitter<KeyringState> emit) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
@@ -93,27 +159,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
   }
 
-  Future<void> _onAcceptRejectKeyring(AcceptRejectKeyringRequest event, Emitter<KeyringState> emit) async {
-    emit(state.copyWith(apiActionStatus: ApiStatus.loading));
-    try {
-      final data = {
-        "request_id": event.requestId,
-        "keyring_category_id": event.keyringCategoryId,
-        "action": event.action,  // accepted or rejected
-        "otp": event.otp
-      };
 
-      final response = await keyringRepository.acceptRejectKeyringRequest(data: data);
-
-      emit(state.copyWith(
-        apiActionStatus: ApiStatus.success,
-      ));
-
-    }catch(e) {
-      log("Error On Accept Reject otp: $e");
-      emit(state.copyWith(apiActionStatus: ApiStatus.failure, actionErrorMessage: e.toString()));
-    }
-  }
 
 }
 

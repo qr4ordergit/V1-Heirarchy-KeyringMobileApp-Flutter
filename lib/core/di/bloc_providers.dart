@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyring/core/storage/local_storage_service.dart';
 import 'package:keyring/core/storage/secure_storage_service.dart';
 import 'package:keyring/domain/repositories/auth/auth_repository.dart';
+import 'package:keyring/presentation/cubit/notification_payload_cubit.dart';
 import '../../domain/repositories/keyring/keyring_repository.dart';
 import '../../presentation/bloc/auth/auth_bloc.dart';
 import '../../presentation/bloc/keyring/keyring_bloc.dart';
@@ -26,5 +27,7 @@ List<BlocProvider> get blocProviders => [
   BlocProvider<KeyringBloc>(
     create: (context) => KeyringBloc(
         keyringRepository: context.read<KeyringRepository>()
-    ),)
+    ),),
+
+
 ];

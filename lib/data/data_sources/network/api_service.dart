@@ -92,7 +92,7 @@ class ApiService {
       case 403:
         return ForbiddenException(message: message);
       case 404:
-        return NotFoundException(message: message);
+        return NotFoundException(message: message, data: data);
       case 409:
         return ConflictException(message: message);
       case 422:

@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'package:keyring/core/services/notifications/notification_service.dart';
 import 'package:keyring/core/storage/secure_storage_service.dart';
+import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/data/models/auth/sign_in_response_model.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/constants/api_constants.dart';
@@ -11,20 +13,32 @@ class AuthRepositoryImpl extends AuthRepository {
   final ApiService apiService;
   final LocalStorageService localStorageService;
   final SecureStorageService secureStorageService;
+  final NotificationService notificationService;
 
   AuthRepositoryImpl({
     required this.apiService,
     required this.localStorageService,
     required this.secureStorageService,
+    required this.notificationService,
   });
 
   @override
   Future<SignInResponseModel> signInUser({required String username, required String password}) async {
+    final fcmToken = await notificationService.getDeviceToken();
+
+    if (fcmToken == null) {
+      return SignInResponseModel();
+    }
+
+    localStorageService.saveString(StorageKeys.fcmToken, fcmToken);
+
     final response = await apiService.post(
       url: ApiConstants.signIn,
       data: {
         "username": username,
         "password": password,
+        "fcm_token": fcmToken,
+        "app_id": appId
       },
     );
 
@@ -38,10 +52,13 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<void> logout() async {
     try {
-      await apiService.post(
-        url: ApiConstants.logout,
+      await apiService.post(url: ApiConstants.logout,
           queryParameters: {
           "redirect_uri": redirectUrl
+          },
+          data: {
+            "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
+            "app_id": appId
           }
       );
     } finally {

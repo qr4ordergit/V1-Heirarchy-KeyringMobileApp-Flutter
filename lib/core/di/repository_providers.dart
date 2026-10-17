@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:keyring/core/navigation/navigation_handler.dart';
 import 'package:keyring/core/network/dio_factory.dart';
+import 'package:keyring/core/services/notifications/notification_service.dart';
 import 'package:keyring/core/storage/secure_storage_service.dart';
 import 'package:keyring/data/repositories/keyring/keyring_repository_impl.dart';
 import 'package:keyring/data/repositories/totp/totp_repository_impl.dart';
@@ -15,12 +17,21 @@ List<RepositoryProvider> repositoryProviders({
   required LocalStorageService localStorageService,
   required SecureStorageService secureStorageService,
 }) => [
+
   RepositoryProvider<LocalStorageService>(
     create: (_) => localStorageService,
   ),
+
   RepositoryProvider<SecureStorageService>(
     create: (_) => secureStorageService,
   ),
+
+  // One NotificationService instance
+  RepositoryProvider<NotificationService>(
+    create: (_) => NotificationService(),
+  ),
+
+  RepositoryProvider<ActiveKeyringTracker>(create: (_) => ActiveKeyringTracker()),
 
   RepositoryProvider<Dio>(
     create: (context) => DioFactory.create(
@@ -35,6 +46,7 @@ List<RepositoryProvider> repositoryProviders({
     ),
   ),
 
+
   RepositoryProvider<TotpRepository>(
     create: (_) => TotpRepositoryImpl(),
   ),
@@ -45,11 +57,13 @@ List<RepositoryProvider> repositoryProviders({
     ),
   ),
 
+
   RepositoryProvider<AuthRepository>(
     create: (context) => AuthRepositoryImpl(
       apiService: context.read<ApiService>(),
       localStorageService: context.read<LocalStorageService>(),
       secureStorageService: context.read<SecureStorageService>(),
+      notificationService: context.read<NotificationService>(),
     ),
   ),
 

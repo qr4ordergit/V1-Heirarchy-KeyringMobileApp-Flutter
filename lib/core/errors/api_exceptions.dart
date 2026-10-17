@@ -28,7 +28,12 @@ class ForbiddenException extends ApiException {
 
 /// 404 — not found
 class NotFoundException extends ApiException {
-  const NotFoundException({super.message, super.statusCode = 404});
+  final dynamic data;
+  const NotFoundException({
+    super.message,
+    this.data,
+    super.statusCode = 404
+  });
 }
 
 /// 409 — conflict (e.g. duplicate entry)

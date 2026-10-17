@@ -1,3 +1,5 @@
+import '../../../core/services/notifications/notification_payload.dart';
+
 abstract class KeyringEvent {}
 
 class GetKeyringDetailsEvent extends KeyringEvent {}
@@ -17,6 +19,11 @@ class ResetKeyringActionEvent extends KeyringEvent {
 class KeyringCategorySearchEvent extends KeyringEvent {
   final String query;
   KeyringCategorySearchEvent(this.query);
+}
+
+class AddNotificationPayloadEvent extends KeyringEvent {
+  final NotificationPayload payload;
+  AddNotificationPayloadEvent(this.payload);
 }
 
 class AcceptRejectKeyringRequest extends KeyringEvent {

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:keyring/core/storage/local_storage_service.dart';
+import 'package:keyring/core/storage/storage_keys.dart';
 import '../../main.dart';
+import '../config/app_config.dart';
 import '../constants/api_constants.dart';
 import '../storage/secure_storage_service.dart';
 import '../routes/app_routes.dart';
@@ -63,17 +65,19 @@ class AuthInterceptor extends QueuedInterceptor {
         return;
       }
 
-// Separate Dio instance: refresh must not recursively
-// trigger this interceptor.
+      // Separate Dio instance: refresh must not recursively
+      // trigger this interceptor.
       final response = await refreshDio.post(
         ApiConstants.getNewToken,
         options: Options(
-          headers: {
-            "Authorization": 'Bearer $accessToken'
-          }
+            headers: {
+              "Authorization": 'Bearer $accessToken'
+            }
         ),
         data: {
-          'refresh_token': refreshToken,
+          "refresh_token": refreshToken,
+          "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
+          "app_id": appId
         },
       );
 
@@ -83,7 +87,7 @@ class AuthInterceptor extends QueuedInterceptor {
       // final newRefreshToken = (data['refresh_token'] as String?) ?? refreshToken;
 
       await secureStorageService.saveAccessToken(
-         newAccessToken,
+        newAccessToken,
       );
 
       request.headers['Authorization'] = 'Bearer $newAccessToken';
@@ -102,7 +106,7 @@ class AuthInterceptor extends QueuedInterceptor {
     await localStorageService.clearAll();
     await secureStorageService.deleteTokens();
 
-    final navigator = appNavigatorKey.currentState;
+    final navigator = rootNavigatorKey.currentState;
 
     if (navigator != null) {
       navigator.pushNamedAndRemoveUntil(

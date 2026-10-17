@@ -9,16 +9,21 @@ import 'package:keyring/core/device/device_utility.dart';
 import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/formatters/date_formatter.dart';
 import 'package:keyring/core/routes/app_routes.dart';
+import 'package:keyring/core/snackbars/snackbars.dart';
 import 'package:keyring/core/storage/local_storage_service.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
+import 'package:keyring/presentation/screens/settings/notifications/widgets/notification_widget.dart';
 import '../../../../core/common_widgets/text_form_field_widget.dart';
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/navigation/navigation_handler.dart';
+import '../../../../core/services/notifications/notification_payload.dart';
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/auth/auth_state.dart';
 import '../../../bloc/keyring/keyring_state.dart';
+import '../../../cubit/notification_payload_cubit.dart';
 
 class KeyringScreen extends StatefulWidget {
   const KeyringScreen({super.key});
@@ -32,9 +37,14 @@ class _KeyringScreenState extends State<KeyringScreen> {
   late final LocalStorageService _localStorageService;
   final _searchCtr = TextEditingController();
 
+  late final ActiveKeyringTracker _tracker;
+
   @override
   void initState() {
     super.initState();
+    _tracker = context.read<ActiveKeyringTracker>();
+    _tracker.isKeyringScreen = true;
+
     _keyringBloc = context.read<KeyringBloc>();
     _localStorageService = context.read<LocalStorageService>();
     initCall();
@@ -51,6 +61,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
   @override
   void dispose() {
     super.dispose();
+    _tracker.isKeyringScreen = false;
     _searchCtr.dispose();
   }
 
@@ -96,102 +107,110 @@ class _KeyringScreenState extends State<KeyringScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(Sizes.sm),
-        child: BlocBuilder<KeyringBloc, KeyringState>(
-          buildWhen: (previous, current) {
-            return previous.apiStatus != current.apiStatus ||
-                previous.keyringData != current.keyringData ||
-                previous.errorMessage != current.errorMessage;
-          },
-          builder: (context, state) {
-            if(state.apiStatus == ApiStatus.loading) {
-              return Center(child: DeviceUtility.loadingWidget());
-            }
+        child: Column(
+          children: [
+            NotificationWidget(),
 
-            if(state.apiStatus == ApiStatus.failure) {
-              return NoDataFoundWidget(message: state.errorMessage.toString(), showImage: true, onRetry: initCall);
-            }
+            Expanded(
+              child: BlocBuilder<KeyringBloc, KeyringState>(
+                buildWhen: (previous, current) {
+                  return previous.apiStatus != current.apiStatus ||
+                      previous.keyringData != current.keyringData ||
+                      previous.errorMessage != current.errorMessage;
+                },
+                builder: (context, state) {
+                  if(state.apiStatus == ApiStatus.loading) {
+                    return Center(child: DeviceUtility.loadingWidget());
+                  }
 
-            if(state.apiStatus == ApiStatus.success) {
-              final keyringList = state.keyringData;
+                  if(state.apiStatus == ApiStatus.failure) {
+                    return NoDataFoundWidget(message: state.errorMessage.toString(), showImage: true, onRetry: initCall);
+                  }
 
-              return Column(
-                children: [
+                  if(state.apiStatus == ApiStatus.success) {
+                    final keyringList = state.keyringData;
 
-                  TextFormFieldWidget(
-                    controller: _searchCtr,
-                    prefixIcon: Iconsax.search_normal_copy,
-                    hintText: searchKeyringCategory,
-                    onChanged: _onSearch,
-                    height: Sizes.lg * 2 - 5,
-                  ),
+                    return Column(
+                      children: [
 
-                  SizedBox(height: Sizes.md),
+                        TextFormFieldWidget(
+                          controller: _searchCtr,
+                          prefixIcon: Iconsax.search_normal_copy,
+                          hintText: searchKeyringCategory,
+                          onChanged: _onSearch,
+                          height: Sizes.lg * 2 - 5,
+                        ),
 
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: keyringList.length,
-                      padding: EdgeInsets.zero,
-                      itemBuilder: (context, index) {
-                        final keyring = keyringList[index];
-                        final bool is2Factor = keyring.twoFa == true && keyring.secretKey != null;
+                        SizedBox(height: Sizes.md),
 
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: Sizes.md),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, AppRoutes.keyringDetails, arguments: keyring),
-                            child: Container(
-                              padding: EdgeInsets.all(Sizes.sm),
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).cardColor,
-                                  // border: Border.all(color: AppColors.greyShade),
-                                  borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      IconWidget(
-                                        backgroundColor: keyring.twoFa == true ? Color.lerp(AppColors.green, Colors.white, 0.2) : Theme.of(context).primaryColor,
-                                        radius: Sizes.circularRadius,
-                                        icon: keyring.twoFa == true ? Iconsax.lock_copy : Iconsax.key_copy, iconColor: AppColors.dark,
-                                        paddingAll: Sizes.sm,
-                                        iconSize: Sizes.iconSm,
-                                      ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: keyringList.length,
+                            padding: EdgeInsets.zero,
+                            itemBuilder: (context, index) {
+                              final keyring = keyringList[index];
+                              final bool is2Factor = keyring.twoFa == true && keyring.secretKey != null;
 
-                                      SizedBox(width: Sizes.sm),
-
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: Sizes.md),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.pushNamed(context, AppRoutes.keyringDetails, arguments: keyring),
+                                  child: Container(
+                                    padding: EdgeInsets.all(Sizes.sm),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context).cardColor,
+                                        // border: Border.all(color: AppColors.greyShade),
+                                        borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
                                           children: [
-                                            Text(keyring.keyringCategoryName.toString(), maxLines: 2, overflow: TextOverflow.ellipsis,),
-                                            SizedBox(height: Sizes.xs/2),
-                                            Text(is2Factor ? encrypted$TwoFa: keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                                            IconWidget(
+                                              backgroundColor: keyring.twoFa == true ? Color.lerp(AppColors.green, Colors.white, 0.4) : Theme.of(context).primaryColor,
+                                              radius: Sizes.circularRadius,
+                                              icon: keyring.twoFa == true ? Iconsax.lock_copy : Iconsax.key_copy, iconColor: AppColors.dark,
+                                              paddingAll: Sizes.sm,
+                                              iconSize: Sizes.iconSm,
+                                            ),
+
+                                            SizedBox(width: Sizes.sm),
+
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(keyring.keyringCategoryName.toString(), maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                                  SizedBox(height: Sizes.xs/2),
+                                                  Text(is2Factor ? encrypted$TwoFa: keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                                                ],
+                                              ),
+                                            ),
+                                            IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
                                           ],
                                         ),
-                                      ),
-                                      IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
-                                    ],
+                                        SizedBox(height: Sizes.sm),
+                                        Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: Text(DateFormatter.formatDate(keyring.createdOn.toString()), style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 2), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: Sizes.sm),
-                                  Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Text(DateFormatter.formatDate(keyring.createdOn.toString()), style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 2), maxLines: 1, overflow: TextOverflow.ellipsis,)
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-            }
+                        ),
+                      ],
+                    );
+                  }
 
-            return SizedBox.shrink();
-          },
+                  return SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
