@@ -17,9 +17,7 @@ import 'notification_payload.dart';
 class NotificationService {
   static const _dummyData = {
     "request_id": "jfdsjssfdreiu#fkldjdlkfde",
-    "keyring_category_id": "fmmmfdkdj",
-    "keyring_category_name": "Murli Keyring Category Name", // ✅ correct key
-    "otp": "123456",
+    "keyring_category_id": "6ad216b886b2576c66e5733f",
   };
 
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -65,7 +63,7 @@ class NotificationService {
 
       if (handledInPlace) {
         log('Showing in-place banner on keyring screen');
-      //   return; // ✅ do NOT show system notification
+      //   return;
       }
 
 

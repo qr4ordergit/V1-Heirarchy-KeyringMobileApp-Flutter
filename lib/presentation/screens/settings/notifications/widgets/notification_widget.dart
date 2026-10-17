@@ -19,8 +19,21 @@ class NotificationWidget extends StatefulWidget {
 }
 
 class _NotificationWidgetState extends State<NotificationWidget> {
+
+
+  void _onAcceptReject({required String requestId, required String keyringCategoryId, required bool isAccept}) {
+    context.read<KeyringBloc>().add(
+        AcceptRejectKeyringRequest(
+          requestId: requestId,
+          keyringCategoryId: keyringCategoryId,
+          action: isAccept ? 'accepted' : 'rejected',
+        ));
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
     return BlocConsumer<KeyringBloc, KeyringState>(
       listenWhen: (prev, curr) => prev.requestStatus != curr.requestStatus && curr.requestStatus == ApiStatus.failure,
       listener: (context, state) {
@@ -33,6 +46,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
       builder: (context, state) {
         final notifications = state.notificationPayloads;
         if (notifications.isEmpty) return const SizedBox.shrink();
+
 
         return Padding(
           padding: EdgeInsets.only(bottom: Sizes.md),
@@ -66,7 +80,8 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              p.keyringCategoryName.toString(),
+                              newRequest,
+                              // p.keyringCategoryName.toString(),
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm),
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -92,14 +107,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                         iconColor: AppColors.green,
                         paddingAll: Sizes.sm,
                         isLoading: isAcceptLoading,
-                        onTap: () => context.read<KeyringBloc>().add(
-                          AcceptRejectKeyringRequest(
-                            requestId: p.requestId ?? '',
-                            keyringCategoryId: p.keyringCategoryId ?? '',
-                            otp: p.otp ?? '',
-                            action: 'accepted',
-                          ),
-                        ),
+                        onTap: () => _onAcceptReject(requestId: p.requestId!, keyringCategoryId: p.keyringCategoryId!, isAccept: true),
                       ),
                       SizedBox(width: Sizes.sm),
                       IconWidget(
@@ -109,14 +117,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                         iconColor: AppColors.red,
                         paddingAll: Sizes.sm,
                         isLoading: isRejectLoading,
-                        onTap:() => context.read<KeyringBloc>().add(
-                          AcceptRejectKeyringRequest(
-                            requestId: p.requestId ?? '',
-                            keyringCategoryId: p.keyringCategoryId ?? '',
-                            otp: p.otp ?? '',
-                            action: 'rejected',
-                          ),
-                        ),
+                        onTap: () => _onAcceptReject(requestId: p.requestId!, keyringCategoryId: p.keyringCategoryId!, isAccept: false),
                       ),
                     ],
                   ),

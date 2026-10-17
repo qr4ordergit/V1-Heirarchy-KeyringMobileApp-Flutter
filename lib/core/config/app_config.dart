@@ -41,6 +41,7 @@ String secureDes = "Protect your contact with Keyring's 2FA and TOTP security.";
 String searchKeyringCategory = "Search Keyring Category";
 String encrypted$TwoFa = "Encrypted & 2FA protected";
 String newRequestDes = "You have received a new request for OTP verification under the category";
+String newRequest = "New Request";
 String things = "";
 
 

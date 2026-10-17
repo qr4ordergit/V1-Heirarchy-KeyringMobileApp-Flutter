@@ -6,6 +6,8 @@ import 'totp_state.dart';
 
 class TotpCubit extends Cubit<TotpState> {
   static const int interval = 120;
+  static const int digits = 6;
+
   final TotpRepository repository;
   final String secretKey;
 
@@ -14,18 +16,18 @@ class TotpCubit extends Cubit<TotpState> {
 
   TotpCubit({required this.repository, required this.secretKey}) : super(const TotpState());
 
-  void start() {
+  void start({required String keyringCategoryId}) {
     _timer?.cancel();
     _lastTimeStep = null;
-    _updateOtp();
+    _updateOtp(keyringCategoryId: keyringCategoryId);
 
     _timer = Timer.periodic(
       const Duration(seconds: 1),
-          (_) => _updateOtp(),
+          (_) => _updateOtp(keyringCategoryId: keyringCategoryId),
     );
   }
 
-  void _updateOtp() {
+  void _updateOtp({required String keyringCategoryId}) {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final timeStep = now ~/ interval;
     final remaining = interval - (now % interval);
@@ -44,11 +46,26 @@ class TotpCubit extends Cubit<TotpState> {
         code = repository.generateCode(
           secretKey: secretKey,
           interval: interval,
-          digits: 6,
+          digits: digits,
         );
 
         _lastTimeStep = timeStep;
       }
+
+      // if (_lastTimeStep != timeStep || code.isEmpty) {
+      //   code = repository.generateCode(
+      //     secretKey: secretKey,
+      //     interval: interval,
+      //     digits: 6,
+      //   );
+      //
+      //   _lastTimeStep = timeStep;
+      //
+      //   repository.updateOtp(
+      //     keyringCategoryId: keyringCategoryId,
+      //     otp: code,
+      //   );
+      // }
 
       emit(TotpState(otpCode: code, remainingSeconds: remaining));
     } catch (_) {

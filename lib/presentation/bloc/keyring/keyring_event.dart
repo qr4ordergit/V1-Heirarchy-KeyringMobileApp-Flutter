@@ -28,13 +28,13 @@ class AddNotificationPayloadEvent extends KeyringEvent {
 
 class AcceptRejectKeyringRequest extends KeyringEvent {
   final String keyringCategoryId;
-  final String otp;
+  // final String otp;
   final String action;
   final String requestId;
 
   AcceptRejectKeyringRequest({
     required this.keyringCategoryId,
-    required this.otp,
+    // required this.otp,
     required this.action,
     required this.requestId,
 });

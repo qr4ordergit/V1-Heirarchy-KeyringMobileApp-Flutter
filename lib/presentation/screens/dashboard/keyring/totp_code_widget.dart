@@ -24,14 +24,13 @@ class TotpCodeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // log("keyringCategoryId: $keyringCategoryId || secretKey: $secretKey");
 
     return BlocProvider(
       key: ValueKey(secretKey),
       create: (context) => TotpCubit(
         repository: context.read<TotpRepository>(),
         secretKey: secretKey,
-      )..start(),
+      )..start(keyringCategoryId: keyringCategoryId),
       child: _TotpCodeView(
         keyringCategoryId: keyringCategoryId,
       ),
@@ -54,11 +53,18 @@ class _TotpCodeView extends StatelessWidget {
       listenWhen: (previous, current) {
         return current.remainingSeconds > previous.remainingSeconds;
       },
-      // listenWhen: (previous, current) {
-      //   return previous.remainingSeconds > 0 && (current.remainingSeconds == 0 ||
-      //           current.remainingSeconds > previous.remainingSeconds);
-      // },
+      // listenWhen: (previous, current) =>
+      // previous.otpCode != current.otpCode ||
+      //     current.remainingSeconds > previous.remainingSeconds,
       listener: (context, state) {
+
+        // if (state.otpCode.isNotEmpty) {
+        //   context.read<TotpRepository>().updateOtp(
+        //     keyringCategoryId: keyringCategoryId,
+        //     otp: state.otpCode,
+        //   );
+        // }
+
         // log("TOTP period ended. Resetting verification status...");
         context.read<KeyringBloc>().add(
           ResetKeyringActionEvent(

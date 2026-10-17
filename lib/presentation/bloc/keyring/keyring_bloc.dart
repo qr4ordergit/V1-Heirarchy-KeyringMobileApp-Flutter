@@ -1,17 +1,21 @@
 import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:keyring/core/config/app_config.dart';
 import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/errors/api_exceptions.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
+import 'package:keyring/domain/repositories/totp/totp_repository.dart';
 import '../../../core/services/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
+import '../../cubit/totp/totp_cubit.dart';
 import 'keyring_event.dart';
 import 'keyring_state.dart';
 
 class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
   final KeyringRepository keyringRepository;
+  final TotpRepository totpRepository;
 
-  KeyringBloc({required this.keyringRepository}) : super(KeyringState()) {
+  KeyringBloc({required this.keyringRepository, required this.totpRepository}) : super(KeyringState()) {
     on<GetKeyringDetailsEvent>(_onKeyringDetails);
     on<GetKeyringPasswordEvent>(_onKeyringPassword);
     on<ResetKeyringActionEvent>(_onKeyringReset);
@@ -30,7 +34,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       if (a.requestId != null && b.requestId != null) {
         return a.requestId == b.requestId;
       }
-      return a.keyringCategoryId == b.keyringCategoryId && a.otp == b.otp;
+      return a.keyringCategoryId == b.keyringCategoryId;
     }
 
     if (state.notificationPayloads.any((e) => isSame(e, payload))) return;
@@ -42,38 +46,61 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
   Future<void> _onAcceptRejectKeyring(AcceptRejectKeyringRequest event, Emitter<KeyringState> emit) async {
     emit(state.copyWith(
-        requestStatus: ApiStatus.loading,
+      requestStatus: ApiStatus.loading,
       loadingRequestId: event.requestId,
       loadingIsAccept: event.action == 'accepted',
       actionErrorMessage: null,
     ));
+
     try {
+      // Find the keyring for this category.
+      final keyring = state.keyringData.firstWhere(
+            (item) => item.id == event.keyringCategoryId,
+      );
+
+      final secretKey = keyring.secretKey;
+
+      if (secretKey == null || secretKey.isEmpty) {
+        emit(state.copyWith(
+          requestStatus: ApiStatus.failure,
+          clearLoading: true,
+          actionErrorMessage: secretKeyIsUnavailable,
+        ));
+        return;
+      }
+
+      // Generate a fresh OTP when Accept or Reject is tapped.
+      final otp = totpRepository.generateCode(
+        secretKey: secretKey,
+        interval: TotpCubit.interval,
+        digits: TotpCubit.digits,
+      );
+
       final data = {
-        "request_id": event.requestId,
-        "keyring_category_id": event.keyringCategoryId,
-        "action": event.action,  // accepted or rejected
-        "otp": event.otp
+        'request_id': event.requestId,
+        'keyring_category_id': event.keyringCategoryId,
+        'action': event.action,
+        'otp': otp,
       };
 
-      final response = await keyringRepository.acceptRejectKeyringRequest(data: data);
+      await keyringRepository.acceptRejectKeyringRequest(data: data);
 
-
-        emit(state.copyWith(
-          requestStatus: ApiStatus.success,
-          clearLoading: true,
-          notificationPayloads: state.notificationPayloads
-              .where((e) => e.requestId != event.requestId)
-              .toList(),
-        ));
+      emit(state.copyWith(
+        requestStatus: ApiStatus.success,
+        clearLoading: true,
+        notificationPayloads: state.notificationPayloads
+            .where((e) => e.requestId != event.requestId)
+            .toList(),
+      ));
     } on NotFoundException catch (e) {
-      log('404 NotFound ${e.message} || Response body: ${e.data}');
       emit(state.copyWith(
         requestStatus: ApiStatus.failure,
         clearLoading: true,
         actionErrorMessage: e.message,
       ));
     } catch (e) {
-      log('Error On Accept Reject otp: $e');
+      log('Error on Accept/Reject: $e');
+
       emit(state.copyWith(
         requestStatus: ApiStatus.failure,
         clearLoading: true,
@@ -81,6 +108,27 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       ));
     }
   }
+
+  Future<void> _onKeyringReset(ResetKeyringActionEvent event, Emitter<KeyringState> emit) async {
+    // totpRepository.removeOtp(event.keyringCategoryId);
+    final updatedList = state.originalKeyringData.map((keyring) {
+      if (keyring.id == event.keyringCategoryId) {
+        return keyring.copyWith(
+          keyringCategoryPasswords: {},
+        );
+      }
+      return keyring;
+    }).toList();
+
+    emit(state.copyWith(
+      originalKeyringData: updatedList,
+      apiActionStatus: ApiStatus.initial,
+      verifiedKeyringCategoryId: null,
+      actionErrorMessage: null,
+    ));
+
+  }
+
   // Notification Section End
 
   Future<void> _onKeyringDetails(GetKeyringDetailsEvent event, Emitter<KeyringState> emit) async {
@@ -140,24 +188,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     }
   }
 
-  Future<void> _onKeyringReset(ResetKeyringActionEvent event, Emitter<KeyringState> emit) async {
-    final updatedList = state.originalKeyringData.map((keyring) {
-      if (keyring.id == event.keyringCategoryId) {
-        return keyring.copyWith(
-          keyringCategoryPasswords: {},
-        );
-      }
-      return keyring;
-    }).toList();
-
-    emit(state.copyWith(
-      originalKeyringData: updatedList,
-      apiActionStatus: ApiStatus.initial,
-      verifiedKeyringCategoryId: null,
-      actionErrorMessage: null,
-    ));
-
-  }
 
 
 

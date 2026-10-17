@@ -58,8 +58,7 @@ class KeyringState {
     List<NotificationPayload>? notificationPayloads,
     String? loadingRequestId,
     bool? loadingIsAccept,
-    bool clearLoading = false,
-    
+    bool clearLoading = false
   }) {
     return KeyringState(
       apiStatus: apiStatus ?? this.apiStatus,
