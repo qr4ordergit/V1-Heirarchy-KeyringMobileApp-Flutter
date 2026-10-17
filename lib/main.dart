@@ -9,7 +9,6 @@ import 'package:keyring/core/di/bloc_providers.dart';
 import 'package:keyring/core/di/repository_providers.dart';
 import 'package:keyring/core/routes/app_routes.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
-import 'core/services/notifications/notification_controller.dart';
 import 'core/services/notifications/notification_display.dart';
 import 'core/services/notifications/notification_service.dart';
 import 'core/storage/local_storage_service.dart';

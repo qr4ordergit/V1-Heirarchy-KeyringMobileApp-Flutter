@@ -2,12 +2,10 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
 import '../../../main.dart';
-import '../../../presentation/cubit/notification_payload_cubit.dart';
 import '../../navigation/navigation_handler.dart';
 import '../../routes/app_routes.dart';
 import 'notification_controller.dart';
@@ -15,11 +13,6 @@ import 'notification_display.dart';
 import 'notification_payload.dart';
 
 class NotificationService {
-  static const _dummyData = {
-    "request_id": "jfdsjssfdreiu#fkldjdlkfde",
-    "keyring_category_id": "6ad216b886b2576c66e5733f",
-  };
-
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   // ---------- Permissions ----------
@@ -53,7 +46,8 @@ class NotificationService {
       log('Foreground notification: ${message.data}');
 
       // Use real data; fallback to dummy for testing
-      final data = message.data.isNotEmpty ? message.data : _dummyData;
+      final data = message.data;
+      // final data = message.data.isNotEmpty ? message.data : ;
 
       final payload = NotificationPayload.fromMap(data);
       if (payload.isEmpty) return;
@@ -88,28 +82,12 @@ class NotificationService {
     });
   }
 
-  // static void handleMessage({required Map<String, dynamic> data}) {
-  //   try {
-  //     final dummyData = {
-  //       "request_id": "jfdsjfdreiu#fkldjdlkfde",
-  //       "keyring_category_id": "fmmmfdkdj",
-  //       "keyring_category_id": "Murli Keyring Category Name",
-  //       "otp": "123456",
-  //     };
-  //
-  //     print("User Tapped: $dummyData");
-  //
-  //     final payload = NotificationPayload.fromMap(dummyData);
-  //     if (payload.isEmpty) return;
-  //   } catch (e, st) {
-  //     log('Error handling notification: $e', stackTrace: st);
-  //   }
-  // }
   static void handleMessage({required Map<String, dynamic> data}) {
     try {
-      final payload = NotificationPayload.fromMap(
-        data.isNotEmpty ? data : _dummyData,
-      );
+      // final payload = NotificationPayload.fromMap(
+      //   data.isNotEmpty ? data : _dummyData,
+      // );
+      final payload = NotificationPayload.fromMap(data);
       if (payload.isEmpty) return;
 
       // If user is on keyring screen, set the payload so the banner appears

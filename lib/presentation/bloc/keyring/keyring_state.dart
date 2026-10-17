@@ -8,6 +8,7 @@ class KeyringState {
   final ApiStatus apiStatus;
   final String? errorMessage;
   final List<KeyringData> originalKeyringData;
+  final List<AccessRequest> pendingRequests;
   final String searchQuery;
 
   final ApiStatus apiActionStatus;
@@ -15,7 +16,7 @@ class KeyringState {
   final String? verifiedKeyringCategoryId;
 
   final ApiStatus requestStatus;
-  final List<NotificationPayload> notificationPayloads;
+  // final List<NotificationPayload> notificationPayloads;
   final String? loadingRequestId;
   final bool? loadingIsAccept;
 
@@ -25,10 +26,11 @@ class KeyringState {
     this.errorMessage,
     this.apiActionStatus = ApiStatus.initial,
     this.originalKeyringData = const [],
+    this.pendingRequests = const [],
     this.actionErrorMessage,
     this.verifiedKeyringCategoryId,
     this.searchQuery = "",
-    this.notificationPayloads = const [],
+    // this.notificationPayloads = const [],
     this.requestStatus = ApiStatus.initial,
     this.loadingRequestId,
     this.loadingIsAccept,
@@ -49,13 +51,14 @@ class KeyringState {
     ApiStatus? apiStatus,
     String? errorMessage,
     List<KeyringData>? originalKeyringData,
+    List<AccessRequest>? pendingRequests,
     ApiStatus? apiActionStatus,
     String? actionErrorMessage,
     String? verifiedKeyringCategoryId,
     String? searchQuery,
 
     ApiStatus? requestStatus,
-    List<NotificationPayload>? notificationPayloads,
+    // List<NotificationPayload>? notificationPayloads,
     String? loadingRequestId,
     bool? loadingIsAccept,
     bool clearLoading = false
@@ -65,11 +68,12 @@ class KeyringState {
       errorMessage: errorMessage ?? this.errorMessage,
       searchQuery: searchQuery ?? this.searchQuery,
       originalKeyringData: originalKeyringData ?? this.originalKeyringData,
+      pendingRequests: pendingRequests ?? this.pendingRequests,
       apiActionStatus: apiActionStatus ?? this.apiActionStatus,
       actionErrorMessage: actionErrorMessage ?? this.actionErrorMessage,
       verifiedKeyringCategoryId: verifiedKeyringCategoryId ?? this.verifiedKeyringCategoryId,
 
-      notificationPayloads: notificationPayloads ?? this.notificationPayloads,
+      // notificationPayloads: notificationPayloads ?? this.notificationPayloads,
       requestStatus: requestStatus ?? this.requestStatus,
 
       loadingRequestId: clearLoading

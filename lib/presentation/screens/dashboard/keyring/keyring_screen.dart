@@ -186,7 +186,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                                 ],
                                               ),
                                             ),
-                                            IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
+                                            // IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
                                           ],
                                         ),
                                         SizedBox(height: Sizes.sm),

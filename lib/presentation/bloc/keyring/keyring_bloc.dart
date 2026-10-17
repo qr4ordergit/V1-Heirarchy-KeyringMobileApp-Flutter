@@ -29,18 +29,15 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
   void _onAddPayload(AddNotificationPayloadEvent event, Emitter<KeyringState> emit) {
     final payload = event.payload;
     if (payload.isEmpty) return;
-
-    bool isSame(NotificationPayload a, NotificationPayload b) {
-      if (a.requestId != null && b.requestId != null) {
-        return a.requestId == b.requestId;
-      }
-      return a.keyringCategoryId == b.keyringCategoryId;
-    }
-
-    if (state.notificationPayloads.any((e) => isSame(e, payload))) return;
+    // Foreground notification: {keyring_category_id: 6ad216b886b2576c66e5733f, keyring_category_name: 2 TOTP 2 Factor New, type: message, request_id: sup-ironman-473#6ad216b886b2576c66e5733f}
+    final AccessRequest newRequest  = AccessRequest(
+      id: payload.requestId,
+      keyringCategoryId: payload.keyringCategoryId,
+      accessUsername: payload.keyringCategoryName
+    );
 
     emit(state.copyWith(
-      notificationPayloads: [...state.notificationPayloads, payload],
+      pendingRequests: [...state.pendingRequests, newRequest],
     ));
   }
 
@@ -85,22 +82,23 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
       await keyringRepository.acceptRejectKeyringRequest(data: data);
 
+      final updatedRequests = state.pendingRequests!
+          .where((request) => request.id != event.requestId)
+          .toList();
+
       emit(state.copyWith(
         requestStatus: ApiStatus.success,
         clearLoading: true,
-        notificationPayloads: state.notificationPayloads
-            .where((e) => e.requestId != event.requestId)
-            .toList(),
+        pendingRequests: updatedRequests,
       ));
     } on NotFoundException catch (e) {
       emit(state.copyWith(
         requestStatus: ApiStatus.failure,
         clearLoading: true,
-        actionErrorMessage: e.message,
+        actionErrorMessage: e.toString(),
       ));
     } catch (e) {
       log('Error on Accept/Reject: $e');
-
       emit(state.copyWith(
         requestStatus: ApiStatus.failure,
         clearLoading: true,
@@ -135,7 +133,18 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
     try {
       final KeyringModel responseModel = await keyringRepository.getKeyringDetails();
-      emit(state.copyWith(apiStatus: ApiStatus.success, originalKeyringData: responseModel.data ?? []));
+      final keyringList = responseModel.data ?? [];
+
+      final pendingRequests = (responseModel.accessRequests?.data ?? [])
+          .where((request) => request.status == 'pending')
+          .toList();
+
+      emit(state.copyWith(
+        apiStatus: ApiStatus.success,
+        originalKeyringData: keyringList,
+        pendingRequests: pendingRequests,
+      ));
+
     }catch(e) {
       log("Error On Keyring List: $e");
       emit(state.copyWith(apiStatus: ApiStatus.failure, errorMessage: e.toString()));
