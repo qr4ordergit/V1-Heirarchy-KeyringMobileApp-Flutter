@@ -109,7 +109,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
         padding: const EdgeInsets.all(Sizes.sm),
         child: Column(
           children: [
-            NotificationWidget(),
+            // NotificationWidget(),
 
             Expanded(
               child: BlocBuilder<KeyringBloc, KeyringState>(
@@ -132,6 +132,8 @@ class _KeyringScreenState extends State<KeyringScreen> {
 
                     return Column(
                       children: [
+
+                        NotificationWidget(),
 
                         TextFormFieldWidget(
                           controller: _searchCtr,
@@ -167,9 +169,10 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                         Row(
                                           children: [
                                             IconWidget(
-                                              backgroundColor: keyring.twoFa == true ? Color.lerp(AppColors.green, Colors.white, 0.4) : Theme.of(context).primaryColor,
+                                              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                                               radius: Sizes.circularRadius,
-                                              icon: keyring.twoFa == true ? Iconsax.lock_copy : Iconsax.key_copy, iconColor: AppColors.dark,
+                                              icon: keyring.twoFa == true ? Iconsax.lock_copy : Iconsax.key_copy,
+                                              iconColor: AppColors.light,
                                               paddingAll: Sizes.sm,
                                               iconSize: Sizes.iconSm,
                                             ),
@@ -182,11 +185,11 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                                 children: [
                                                   Text(keyring.keyringCategoryName.toString(), maxLines: 2, overflow: TextOverflow.ellipsis,),
                                                   SizedBox(height: Sizes.xs/2),
-                                                  Text(is2Factor ? encrypted$TwoFa: keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis,)
+                                                  Text(is2Factor ? encrypted$TwoFa: keyring.keyringCategoryPasswords!.length <= 1 ? '${keyring.keyringCategoryPasswords!.length} $password' : '${keyring.keyringCategoryPasswords!.length} $passwords', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1, color: is2Factor ? Color.lerp(AppColors.green, Colors.white, 0.4) : null), maxLines: 1, overflow: TextOverflow.ellipsis,)
                                                 ],
                                               ),
                                             ),
-                                            // IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
+                                            IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
                                           ],
                                         ),
                                         SizedBox(height: Sizes.sm),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-Color primaryColor = const Color(0xff778bff);
-// Color primaryColor = const Color(0xff6a3de8);
-// Color primaryColor = const Color(0xff0057b8); // dark logo blue
-
+Color primaryColor = const Color(0xFF6D28D9);
+// Color primaryColor = const Color(0xff778bff);
 
 String redirectUrl = "https://messaging.thenodeai.com/#/";
 

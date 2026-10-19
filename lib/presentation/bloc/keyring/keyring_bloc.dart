@@ -30,6 +30,16 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     final payload = event.payload;
     if (payload.isEmpty) return;
     // Foreground notification: {keyring_category_id: 6ad216b886b2576c66e5733f, keyring_category_name: 2 TOTP 2 Factor New, type: message, request_id: sup-ironman-473#6ad216b886b2576c66e5733f}
+
+    final requestId = payload.requestId;
+
+    // Prevent duplicate requests with the same requestId
+    final alreadyExists = state.pendingRequests.any(
+          (request) => request.id == requestId,
+    );
+
+    if (alreadyExists) return;
+
     final AccessRequest newRequest  = AccessRequest(
       id: payload.requestId,
       keyringCategoryId: payload.keyringCategoryId,
@@ -51,7 +61,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
     try {
       // Find the keyring for this category.
-      final keyring = state.keyringData.firstWhere(
+      final keyring = state.originalKeyringData.firstWhere(
             (item) => item.id == event.keyringCategoryId,
       );
 

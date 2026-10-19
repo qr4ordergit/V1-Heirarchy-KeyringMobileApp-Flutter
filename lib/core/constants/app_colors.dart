@@ -6,9 +6,11 @@ class AppColors  {
   // Background colors
   static const Color light = Color(0xFFF6F6F6);
   static const Color dark = Color(0xFF010101);
-  static const Color scaffoldBgColor = Color(0xFF131628);
-  static const Color cardColor = Color(0xFF242940);
+  // static const Color scaffoldBgColor = Color(0xFF131628);
+  // static const Color cardColor = Color(0xFF242940);
 
+  static const Color scaffoldBgColor = Color(0xFF050505);
+  static const Color cardColor = Color(0xFF171320);
 
   // Error and validation colors
   static const Color error = Color(0xFFD32F2F);
