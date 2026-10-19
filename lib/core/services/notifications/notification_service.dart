@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -36,7 +37,10 @@ class NotificationService {
   // ---------- Awesome listeners (taps on local notifications) ----------
   Future<void> _setAwesomeListeners() async {
     await AwesomeNotifications().setListeners(
-          onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+        onActionReceivedMethod:         NotificationController.onActionReceivedMethod,
+        onNotificationCreatedMethod:    NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:  NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:  NotificationController.onDismissActionReceivedMethod
     );
   }
 
@@ -78,15 +82,14 @@ class NotificationService {
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      print("When User tap on notification: ${event.data}");
       handleMessage(data: event.data);
     });
   }
 
   static void handleMessage({required Map<String, dynamic> data}) {
     try {
-      // final payload = NotificationPayload.fromMap(
-      //   data.isNotEmpty ? data : _dummyData,
-      // );
+
       final payload = NotificationPayload.fromMap(data);
       if (payload.isEmpty) return;
 

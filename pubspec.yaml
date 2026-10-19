@@ -44,6 +44,7 @@ dependencies:
   firebase_messaging: ^17.0.0
   firebase_core: ^5.0.0
   delightful_toast: ^1.1.0
+#  flutter_native_splash: ^2.4.8
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +56,25 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_logo.png"
+#  min_sdk_android: 21 # android min sdk min:16, default 21
+#  web:
+#    generate: true
+#    image_path: "path/to/image.png"
+#    background_color: "#hexcode"
+#    theme_color: "#hexcode"
+#  windows:
+#    generate: true
+#    image_path: "path/to/image.png"
+#    icon_size: 48 # min:48, max:256, default: 48
+#  macos:
+#    generate: true
+#    image_path: "path/to/image.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -113,3 +133,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+#flutter_native_splash:
+#  color: "#050505"               # Background color for light mode
+#  image: "assets/images/app_logo.png" # Path to your existing app logo asset
+#
+#  # Optional: Dark mode background and logo support
+#  color_dark: "#050505"
+#  image_dark: "assets/images/app_logo.png"
+#
+#  # Optional: Android 12+ specific branding support
+#  android_12:
+#    color: "#050505"
+#    image: "assets/images/app_logo.png"
+#    color_dark: "#050505"
+#    image_dark: "assets/images/app_logo.png"
+#
+#  fullscreen: true

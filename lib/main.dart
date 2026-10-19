@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,7 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("Notification On Background: $message");
+  print("Notification On Background: ${message.data}");
 }
 
 void main() async {
@@ -32,12 +31,7 @@ void main() async {
   );
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  await AwesomeNotifications().initialize(
-    'resource://mipmap/ic_launcher', // better: a white monochrome drawable, e.g. 'resource://drawable/ic_notification'
-    [NotificationChannels.highImportance],
-    debug: true,
-  );
+  await NotificationChannels.initAwesome();
 
   final localStorageService = await LocalStorageService.getInstance();
   final secureStorageService = SecureStorageService.instance;
