@@ -1,27 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
-class NotificationChannels {
-  static const highImportanceKey = 'high_importance_channel';
-
-  static final highImportance = NotificationChannel(
-    channelKey: highImportanceKey,
-    channelName: 'Keyring Channel',
-    channelDescription: 'this is Keyring channel',
-    importance: NotificationImportance.Max,
-    playSound: true,
-    channelShowBadge: true,
-  );
-
-  static Future<void> initAwesome() async {
-    await AwesomeNotifications().initialize(
-      'resource://mipmap/ic_launcher',
-      [highImportance],
-      debug: true,
-    );
-  }
-
-}
+import 'notification_channels.dart';
 
 class NotificationDisplay {
   static Future<void> showNotification(RemoteMessage message) async {
@@ -35,6 +14,7 @@ class NotificationDisplay {
         title: notification?.title ?? data['title'],
         body: notification?.body ?? data['body'],
         payload: data.map((k, v) => MapEntry(k, v?.toString())),
+        // icon: 'resource://drawable/ic_notification',
       ),
     );
   }
@@ -78,5 +58,3 @@ class NotificationDisplay {
 //     );
 //   }
 // }
-
-

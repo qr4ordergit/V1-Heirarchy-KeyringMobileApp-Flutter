@@ -1,4 +1,4 @@
-import '../../../core/services/notifications/notification_payload.dart';
+import '../../../data/models/notifications/notification_payload.dart';
 
 abstract class KeyringEvent {}
 

@@ -18,7 +18,7 @@ import 'package:keyring/presentation/screens/settings/notifications/widgets/noti
 import '../../../../core/common_widgets/text_form_field_widget.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/navigation/navigation_handler.dart';
-import '../../../../core/services/notifications/notification_payload.dart';
+import '../../../../data/models/notifications/notification_payload.dart';
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/auth/auth_state.dart';

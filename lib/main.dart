@@ -8,7 +8,8 @@ import 'package:keyring/core/di/bloc_providers.dart';
 import 'package:keyring/core/di/repository_providers.dart';
 import 'package:keyring/core/routes/app_routes.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
-import 'core/services/notifications/notification_display.dart';
+import 'core/services/notifications/firebase_messaging_background_handler.dart';
+import 'core/services/notifications/notification_channels.dart';
 import 'core/services/notifications/notification_service.dart';
 import 'core/storage/local_storage_service.dart';
 import 'core/storage/secure_storage_service.dart';
@@ -16,12 +17,6 @@ import 'core/theme/theme.dart';
 import 'firebase_options.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
-
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("Notification On Background: ${message.data}");
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

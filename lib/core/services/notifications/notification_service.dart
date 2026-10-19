@@ -3,15 +3,11 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
-import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
-import '../../../main.dart';
 import '../../navigation/navigation_handler.dart';
-import '../../routes/app_routes.dart';
 import 'notification_controller.dart';
+import '../../../data/models/notifications/notification_payload.dart';
 import 'notification_display.dart';
-import 'notification_payload.dart';
+import 'notification_navigation_handler.dart';
 
 class NotificationService {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -78,35 +74,17 @@ class NotificationService {
   Future<void> setupInteractMessage() async {
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
-      handleMessage(data: initialMessage.data);
+      NotificationNavigationHandler.handleMessage(
+        data: initialMessage.data,
+      );
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       print("When User tap on notification: ${event.data}");
-      handleMessage(data: event.data);
+      NotificationNavigationHandler.handleMessage(
+        data: event.data,
+      );
     });
-  }
-
-  static void handleMessage({required Map<String, dynamic> data}) {
-    try {
-
-      final payload = NotificationPayload.fromMap(data);
-      if (payload.isEmpty) return;
-
-      // If user is on keyring screen, set the payload so the banner appears
-      final handled = NavigationHandler.handleForeground(payload);
-
-      if (!handled) {
-        rootNavigatorKey.currentState?.pushNamedAndRemoveUntil(
-          AppRoutes.keyring,
-              (_) => false,
-        );
-        rootNavigatorKey.currentContext
-            ?.read<KeyringBloc>().add(AddNotificationPayloadEvent(payload));
-      }
-    } catch (e, st) {
-      log('Error handling notification: $e', stackTrace: st);
-    }
   }
 
   Future<void> foregroundMessage() async {

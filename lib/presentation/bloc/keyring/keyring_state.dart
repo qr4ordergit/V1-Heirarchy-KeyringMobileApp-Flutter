@@ -1,7 +1,7 @@
 
 import 'package:keyring/core/enums/enums.dart';
 
-import '../../../core/services/notifications/notification_payload.dart';
+import '../../../data/models/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
 
 class KeyringState {

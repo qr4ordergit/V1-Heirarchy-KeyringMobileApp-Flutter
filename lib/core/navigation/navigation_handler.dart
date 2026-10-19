@@ -4,7 +4,7 @@ import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
 import '../../main.dart';
 import '../../presentation/cubit/notification_payload_cubit.dart';
-import '../services/notifications/notification_payload.dart';
+import '../../data/models/notifications/notification_payload.dart';
 
 class ActiveKeyringTracker {
   bool isKeyringScreen = false;

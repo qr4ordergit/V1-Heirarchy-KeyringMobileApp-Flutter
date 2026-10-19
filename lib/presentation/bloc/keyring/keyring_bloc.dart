@@ -5,7 +5,7 @@ import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/errors/api_exceptions.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
 import 'package:keyring/domain/repositories/totp/totp_repository.dart';
-import '../../../core/services/notifications/notification_payload.dart';
+import '../../../data/models/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
 import '../../cubit/totp/totp_cubit.dart';
 import 'keyring_event.dart';
