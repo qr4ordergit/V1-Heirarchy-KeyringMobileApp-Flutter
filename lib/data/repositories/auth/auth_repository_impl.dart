@@ -13,18 +13,16 @@ class AuthRepositoryImpl extends AuthRepository {
   final ApiService apiService;
   final LocalStorageService localStorageService;
   final SecureStorageService secureStorageService;
-  final NotificationService notificationService;
 
   AuthRepositoryImpl({
     required this.apiService,
     required this.localStorageService,
     required this.secureStorageService,
-    required this.notificationService,
   });
 
   @override
   Future<SignInResponseModel> signInUser({required String username, required String password}) async {
-    final fcmToken = await notificationService.getDeviceToken();
+    final fcmToken = await NotificationService.getDeviceToken();
 
     if (fcmToken == null) {
       return SignInResponseModel();

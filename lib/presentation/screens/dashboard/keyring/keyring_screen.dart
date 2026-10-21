@@ -9,7 +9,6 @@ import 'package:keyring/core/device/device_utility.dart';
 import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/formatters/date_formatter.dart';
 import 'package:keyring/core/routes/app_routes.dart';
-import 'package:keyring/core/snackbars/snackbars.dart';
 import 'package:keyring/core/storage/local_storage_service.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/presentation/bloc/keyring/keyring_bloc.dart';
@@ -17,13 +16,10 @@ import 'package:keyring/presentation/bloc/keyring/keyring_event.dart';
 import 'package:keyring/presentation/screens/settings/notifications/widgets/notification_widget.dart';
 import '../../../../core/common_widgets/text_form_field_widget.dart';
 import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/navigation/navigation_handler.dart';
-import '../../../../data/models/notifications/notification_payload.dart';
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/auth/auth_state.dart';
 import '../../../bloc/keyring/keyring_state.dart';
-import '../../../cubit/notification_payload_cubit.dart';
 
 class KeyringScreen extends StatefulWidget {
   const KeyringScreen({super.key});
@@ -37,13 +33,13 @@ class _KeyringScreenState extends State<KeyringScreen> {
   late final LocalStorageService _localStorageService;
   final _searchCtr = TextEditingController();
 
-  late final ActiveKeyringTracker _tracker;
+  // late final ActiveKeyringTracker _tracker;
 
   @override
   void initState() {
     super.initState();
-    _tracker = context.read<ActiveKeyringTracker>();
-    _tracker.isKeyringScreen = true;
+    // _tracker = context.read<ActiveKeyringTracker>();
+    // _tracker.isKeyringScreen = true;
 
     _keyringBloc = context.read<KeyringBloc>();
     _localStorageService = context.read<LocalStorageService>();
@@ -61,7 +57,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
   @override
   void dispose() {
     super.dispose();
-    _tracker.isKeyringScreen = false;
+    // _tracker.isKeyringScreen = false;
     _searchCtr.dispose();
   }
 

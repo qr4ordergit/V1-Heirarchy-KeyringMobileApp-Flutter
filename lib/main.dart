@@ -8,6 +8,7 @@ import 'package:keyring/core/di/bloc_providers.dart';
 import 'package:keyring/core/di/repository_providers.dart';
 import 'package:keyring/core/routes/app_routes.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
+import 'core/routes/app_route_observer.dart';
 import 'core/services/notifications/firebase_messaging_background_handler.dart';
 import 'core/services/notifications/notification_channels.dart';
 import 'core/services/notifications/notification_service.dart';
@@ -63,7 +64,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationService>().notificationInitCall();
+    NotificationService.notificationInitCall();
     log("Keyring: Stored Fcm Token:\n${context.read<LocalStorageService>().getString(StorageKeys.fcmToken)}");
   }
 
@@ -71,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: rootNavigatorKey,
+      navigatorObservers: [appRouteObserver],
       debugShowCheckedModeBanner: false,
       title: appName,
       theme: AppTheme.materialLightTheme,

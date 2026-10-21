@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:keyring/core/config/app_config.dart';
 import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/errors/api_exceptions.dart';
+import 'package:keyring/core/services/notifications/notification_service.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
 import 'package:keyring/domain/repositories/totp/totp_repository.dart';
 import '../../../data/models/notifications/notification_payload.dart';
@@ -92,7 +93,9 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
       await keyringRepository.acceptRejectKeyringRequest(data: data);
 
-      final updatedRequests = state.pendingRequests!
+      await NotificationService.clearSpecificNotification(id: event.requestId);
+
+      final updatedRequests = state.pendingRequests
           .where((request) => request.id != event.requestId)
           .toList();
 

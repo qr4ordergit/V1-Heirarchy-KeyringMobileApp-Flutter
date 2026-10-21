@@ -10,6 +10,7 @@ class NotificationChannels {
     importance: NotificationImportance.Max,
     playSound: true,
     channelShowBadge: true,
+    soundSource: 'resource://raw/keyring_sound', // no file extension
   );
 
   static Future<void> initAwesome() async {

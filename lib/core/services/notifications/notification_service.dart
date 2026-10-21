@@ -3,17 +3,19 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
-import '../../navigation/navigation_handler.dart';
 import 'notification_controller.dart';
 import '../../../data/models/notifications/notification_payload.dart';
 import 'notification_display.dart';
 import 'notification_navigation_handler.dart';
+import 'request_notification_ids.dart';
 
 class NotificationService {
-  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationService._();
+
+  static final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   // ---------- Permissions ----------
-  Future<void> requestNotificationPermission() async {
+  static Future<void> requestNotificationPermission() async {
     // iOS + FCM permission
     final settings = await messaging.requestPermission(
       alert: true,
@@ -31,7 +33,7 @@ class NotificationService {
   }
 
   // ---------- Awesome listeners (taps on local notifications) ----------
-  Future<void> _setAwesomeListeners() async {
+  static Future<void> _setAwesomeListeners() async {
     await AwesomeNotifications().setListeners(
         onActionReceivedMethod:         NotificationController.onActionReceivedMethod,
         onNotificationCreatedMethod:    NotificationController.onNotificationCreatedMethod,
@@ -41,25 +43,17 @@ class NotificationService {
   }
 
   // ---------- Foreground FCM ----------
-  void firebaseInit() {
+  static void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
-      log('Foreground notification: ${message.data}');
-
-      // Use real data; fallback to dummy for testing
       final data = message.data;
-      // final data = message.data.isNotEmpty ? message.data : ;
+      log('Foreground notification: $data');
 
-      final payload = NotificationPayload.fromMap(data);
-      if (payload.isEmpty) return;
+      final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
+        data: message.data,
+      );
 
-      // 1) Try to handle in-place (user is on keyring screen)
-      final handledInPlace = NavigationHandler.handleForeground(payload);
-
-      if (handledInPlace) {
-        log('Showing in-place banner on keyring screen');
-      //   return;
-      }
-
+      // Show/Hide Notification
+      if (handledOnKeyring) return;
 
       if (Platform.isIOS) {
         foregroundMessage(); // iOS shows it natively
@@ -71,7 +65,7 @@ class NotificationService {
     });
   }
 
-  Future<void> setupInteractMessage() async {
+  static Future<void> setupInteractMessage() async {
     final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       NotificationNavigationHandler.handleMessage(
@@ -87,7 +81,7 @@ class NotificationService {
     });
   }
 
-  Future<void> foregroundMessage() async {
+  static Future<void> foregroundMessage() async {
     await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
@@ -95,7 +89,7 @@ class NotificationService {
     );
   }
 
-  Future<String?> getDeviceToken() async {
+  static Future<String?> getDeviceToken() async {
     try {
       return await messaging.getToken();
     } catch (e) {
@@ -104,11 +98,17 @@ class NotificationService {
     }
   }
 
-  Future<void> clearAllNotifications() async {
+  static Future<void> clearAllNotifications() async {
     await AwesomeNotifications().cancelAll();
   }
 
-  Future<void> notificationInitCall() async {
+  static Future<void> clearSpecificNotification({required String id}) async {
+    await AwesomeNotifications().cancel(
+      RequestNotificationIds.fromRequestId(id),
+    );
+  }
+
+  static Future<void> notificationInitCall() async {
     await requestNotificationPermission();
     await foregroundMessage();
     await _setAwesomeListeners();
