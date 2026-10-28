@@ -20,7 +20,7 @@ class KeyringDetailsScreen extends StatefulWidget {
 class _KeyringDetailsScreenState extends State<KeyringDetailsScreen> {
   @override
   Widget build(BuildContext context) {
-    final routeKeyring = ModalRoute.of(context)!.settings.arguments as KeyringData;
+    final routeKeyring = ModalRoute.of(context)?.settings.arguments as KeyringData;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,6 +55,7 @@ class _KeyringDetailsScreenState extends State<KeyringDetailsScreen> {
                   // TOTP Section Start
                   if(isTOTP)
                     TotpCodeWidget(secretKey: keyring.secretKey!, keyringCategoryId: keyring.id!),
+                    // TotpCodeWidget(secretKey: "xjkjljjfksjdf dfsdjlk ", keyringCategoryId: "dxd"),
                   // TOTP Section End
 
                   if (keyring.keyringCategoryPasswords?.isNotEmpty == true)
@@ -88,7 +89,7 @@ class _KeyringDetailsScreenState extends State<KeyringDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(aboutTOTP, style: Theme.of(context).textTheme.bodyMedium),
+                                  Text(aboutTOTP, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm)),
                                   SizedBox(height: Sizes.xs),
                                   Text(totpDes, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs)),
                                 ],

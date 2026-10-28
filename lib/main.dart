@@ -83,3 +83,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// flutter build apk --release --obfuscate --split-debug-info=build/debug-info
+// without obfuscate just to check app work
+// flutter build apk --release --split-debug-info=build/debug-info
+// if app not work after above command do check with what happen with below commands
+// adb logcat -c // It clears the current contents of the Android device's internal log buffer.
+// adb logcat *:S flutter:D AndroidRuntime:E

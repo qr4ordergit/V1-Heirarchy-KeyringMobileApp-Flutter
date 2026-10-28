@@ -44,6 +44,7 @@ dependencies:
   firebase_messaging: ^17.0.0
   firebase_core: ^5.0.0
   delightful_toast: ^1.1.0
+  device_info_plus: ^13.3.0
 #  flutter_native_splash: ^2.4.8
 
 dev_dependencies:

@@ -28,14 +28,23 @@ class AddNotificationPayloadEvent extends KeyringEvent {
 
 class AcceptRejectKeyringRequest extends KeyringEvent {
   final String keyringCategoryId;
-  // final String otp;
   final String action;
   final String requestId;
+  final int interval;
 
   AcceptRejectKeyringRequest({
     required this.keyringCategoryId,
-    // required this.otp,
     required this.action,
     required this.requestId,
+    required this.interval,
 });
+}
+
+class LoadSavedIntervalEvent extends KeyringEvent {}
+
+class GetIntervalEvent extends KeyringEvent {}
+
+class UpdateIntervalEvent extends KeyringEvent {
+  int interval;
+  UpdateIntervalEvent({required this.interval});
 }

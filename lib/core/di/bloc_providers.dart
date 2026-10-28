@@ -27,8 +27,9 @@ List<BlocProvider> get blocProviders => [
 
   BlocProvider<KeyringBloc>(
     create: (context) => KeyringBloc(
-        keyringRepository: context.read<KeyringRepository>(),
-        totpRepository: context.read<TotpRepository>()
+      keyringRepository: context.read<KeyringRepository>(),
+      totpRepository: context.read<TotpRepository>(),
+      localStorageService: context.read<LocalStorageService>(),
     ),),
 
 

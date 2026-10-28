@@ -16,10 +16,13 @@ class KeyringState {
   final String? verifiedKeyringCategoryId;
 
   final ApiStatus requestStatus;
-  // final List<NotificationPayload> notificationPayloads;
   final String? loadingRequestId;
   final bool? loadingIsAccept;
 
+  final ApiStatus intervalStatus;
+  final ApiStatus intervalUpdateStatus;
+  final String? intervalMessage;
+  final int interval;
 
   const KeyringState({
     this.apiStatus = ApiStatus.initial,
@@ -30,11 +33,14 @@ class KeyringState {
     this.actionErrorMessage,
     this.verifiedKeyringCategoryId,
     this.searchQuery = "",
-    // this.notificationPayloads = const [],
     this.requestStatus = ApiStatus.initial,
     this.loadingRequestId,
     this.loadingIsAccept,
 
+    this.intervalStatus = ApiStatus.initial,
+    this.intervalUpdateStatus = ApiStatus.initial,
+    this.intervalMessage,
+    this.interval = 120,
 });
 
 
@@ -58,10 +64,14 @@ class KeyringState {
     String? searchQuery,
 
     ApiStatus? requestStatus,
-    // List<NotificationPayload>? notificationPayloads,
     String? loadingRequestId,
     bool? loadingIsAccept,
-    bool clearLoading = false
+    bool clearLoading = false,
+
+    ApiStatus? intervalStatus,
+    ApiStatus? intervalUpdateStatus,
+    String? intervalMessage,
+    int? interval,
   }) {
     return KeyringState(
       apiStatus: apiStatus ?? this.apiStatus,
@@ -72,8 +82,11 @@ class KeyringState {
       apiActionStatus: apiActionStatus ?? this.apiActionStatus,
       actionErrorMessage: actionErrorMessage ?? this.actionErrorMessage,
       verifiedKeyringCategoryId: verifiedKeyringCategoryId ?? this.verifiedKeyringCategoryId,
+      intervalStatus: intervalStatus ?? this.intervalStatus,
+      intervalUpdateStatus: intervalUpdateStatus ?? this.intervalUpdateStatus,
+      intervalMessage: intervalMessage,
+      interval: interval ?? this.interval,
 
-      // notificationPayloads: notificationPayloads ?? this.notificationPayloads,
       requestStatus: requestStatus ?? this.requestStatus,
 
       loadingRequestId: clearLoading

@@ -9,5 +9,9 @@ abstract class KeyringRepository {
 
   Future<dynamic> acceptRejectKeyringRequest({required Map<String, dynamic> data});
 
+  Future<dynamic> getInterval();
+
+  Future<dynamic> updateInterval({required Map<String, dynamic> data});
+
 
 }

@@ -4,6 +4,8 @@ import 'package:keyring/core/config/app_config.dart';
 import 'package:keyring/core/enums/enums.dart';
 import 'package:keyring/core/errors/api_exceptions.dart';
 import 'package:keyring/core/services/notifications/notification_service.dart';
+import 'package:keyring/core/storage/local_storage_service.dart';
+import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
 import 'package:keyring/domain/repositories/totp/totp_repository.dart';
 import '../../../data/models/notifications/notification_payload.dart';
@@ -15,8 +17,9 @@ import 'keyring_state.dart';
 class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
   final KeyringRepository keyringRepository;
   final TotpRepository totpRepository;
+  final LocalStorageService localStorageService;
 
-  KeyringBloc({required this.keyringRepository, required this.totpRepository}) : super(KeyringState()) {
+  KeyringBloc({required this.keyringRepository, required this.totpRepository, required this.localStorageService}) : super(KeyringState()) {
     on<GetKeyringDetailsEvent>(_onKeyringDetails);
     on<GetKeyringPasswordEvent>(_onKeyringPassword);
     on<ResetKeyringActionEvent>(_onKeyringReset);
@@ -24,6 +27,77 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
     on<AddNotificationPayloadEvent>(_onAddPayload);
     on<AcceptRejectKeyringRequest>(_onAcceptRejectKeyring);
+
+    on<LoadSavedIntervalEvent>(_onLoadSavedInterval);
+    on<GetIntervalEvent>(_onGetInterval);
+    on<UpdateIntervalEvent>(_onUpdateInterval);
+  }
+
+  Future<void> _onLoadSavedInterval(LoadSavedIntervalEvent event, Emitter<KeyringState> emit) async {
+    // final savedInterval = localStorageService.getInt(StorageKeys.interval);
+    // log("savedInterval: $savedInterval");
+
+    // if(savedInterval != null) {
+    //   emit(state.copyWith(interval: savedInterval));
+    // }else {
+      add(GetIntervalEvent());
+    // }
+  }
+
+
+  Future<void> _onGetInterval(GetIntervalEvent event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(
+      intervalStatus: ApiStatus.loading,
+      intervalUpdateStatus: ApiStatus.initial,
+    ));
+    try {
+      final response = await keyringRepository.getInterval();
+      // {"success":true,"data":{"custom_totp_validity":120}}
+
+      final int interval = (response['data']?['custom_totp_validity'] as num?)?.toInt() ?? 0;
+
+      await localStorageService.saveInt(StorageKeys.interval, interval);
+
+      emit(state.copyWith(
+        interval: interval,
+        intervalStatus: ApiStatus.success,
+      ));
+
+    }catch(e) {
+      log("Error On Get Interval: $e");
+      emit(state.copyWith(intervalStatus: ApiStatus.failure, intervalMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateInterval(UpdateIntervalEvent event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(
+        interval: event.interval,
+        intervalUpdateStatus: ApiStatus.loading
+    ));
+
+    try {
+      var data = {
+        "custom_totp_validity": event.interval,
+      };
+
+      final response = await keyringRepository.updateInterval(
+        data: data,
+      );
+
+      await localStorageService.saveInt(StorageKeys.interval, event.interval);
+
+      emit(state.copyWith(
+        interval: event.interval,
+        intervalMessage: response["message"],
+        intervalUpdateStatus: ApiStatus.success,
+      ));
+    } catch (e) {
+      log('Error on Update Interval: $e');
+      emit(state.copyWith(
+        intervalMessage: e.toString(),
+        intervalUpdateStatus: ApiStatus.failure,
+      ));
+    }
   }
 
   // Notification Section Start
@@ -42,9 +116,9 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     if (alreadyExists) return;
 
     final AccessRequest newRequest  = AccessRequest(
-      id: payload.requestId,
-      keyringCategoryId: payload.keyringCategoryId,
-      accessUsername: payload.keyringCategoryName
+        id: payload.requestId,
+        keyringCategoryId: payload.keyringCategoryId,
+        accessUsername: payload.keyringCategoryName
     );
 
     emit(state.copyWith(
@@ -80,7 +154,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       // Generate a fresh OTP when Accept or Reject is tapped.
       final otp = totpRepository.generateCode(
         secretKey: secretKey,
-        interval: TotpCubit.interval,
+        interval: event.interval,
         digits: TotpCubit.digits,
       );
 

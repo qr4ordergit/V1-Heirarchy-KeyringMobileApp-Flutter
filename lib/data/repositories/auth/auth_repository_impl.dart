@@ -5,6 +5,7 @@ import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/data/models/auth/sign_in_response_model.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../core/services/device/device_info_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../domain/repositories/auth/auth_repository.dart';
 import '../../data_sources/network/api_service.dart';
@@ -36,7 +37,8 @@ class AuthRepositoryImpl extends AuthRepository {
         "username": username,
         "password": password,
         "fcm_token": fcmToken,
-        "app_id": appId
+        "app_id": appId,
+        // "device_name": await DeviceInfoService.getDeviceName(),
       },
     );
 

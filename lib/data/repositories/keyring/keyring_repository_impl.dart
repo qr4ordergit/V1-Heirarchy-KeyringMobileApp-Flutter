@@ -46,5 +46,23 @@ class KeyringRepositoryImpl extends KeyringRepository {
     return response.data;
   }
 
+  @override
+  Future<dynamic> getInterval() async {
+    final response = await apiService.get(
+      url: ApiConstants.interval,
+    );
+    return response.data;
+  }
+
+  @override
+  Future<dynamic> updateInterval({required Map<String, dynamic> data}) async {
+
+    final response = await apiService.put(
+      url: ApiConstants.interval,
+      data: data,
+    );
+    return response.data;
+  }
+
 
 }

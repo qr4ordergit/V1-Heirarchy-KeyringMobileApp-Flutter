@@ -5,6 +5,7 @@ class StorageKeys {
   static const String accessToken = 'access_token';
   static const String refreshToken = 'refresh_token';
   static const String fcmToken = 'fcm_token';
+  static const String interval = 'interval';
 
   static const String loggedInAccountData = 'logged_in_account_data';
   // static const String userDetails = 'user_details';

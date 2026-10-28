@@ -41,11 +41,10 @@ class TotpVerificationWidget extends StatelessWidget {
             children: [
               Text(getPasswords, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm)),
               SizedBox(width: Sizes.xs),
-              Text(getPasswordDes, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: Sizes.fontSizeXs)),
+              Text(getPasswordDes, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs)),
               SizedBox(height: Sizes.xs),
               ButtonWidget(
                 onPressed: otpCode.length != 6 || errorMessage != null ? null : () {
-                // onPressed: totpState.otpCode.length != 6 || totpState.errorMessage != null ? null : () {
                   context.read<KeyringBloc>().add(
                     GetKeyringPasswordEvent(
                       keyringCategoryId: keyringCategoryId,
