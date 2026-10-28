@@ -50,7 +50,7 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<void> logout() async {
+  Future<void> logout({bool isAllDevice = false}) async {
     try {
       await apiService.post(url: ApiConstants.logout,
           queryParameters: {
@@ -58,6 +58,8 @@ class AuthRepositoryImpl extends AuthRepository {
           },
           data: {
             "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
+            if (!isAllDevice)
+              "refresh_token": localStorageService.getString(StorageKeys.refreshToken),
             "app_id": appId
           }
       );
