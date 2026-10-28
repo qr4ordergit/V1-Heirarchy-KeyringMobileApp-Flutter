@@ -1,6 +1,9 @@
 class ApiConstants {
-  static const String baseUrl = "https://53mxdgl1ok.execute-api.eu-central-1.amazonaws.com/dev/api";
-  // static const String baseUrl = "https://u2hjtodeyl.execute-api.ap-south-1.amazonaws.com/dev/api";
+  // static const String domain = "https://u2hjtodeyl.execute-api.ap-south-1.amazonaws.com";
+  static const String domain = "https://53mxdgl1ok.execute-api.eu-central-1.amazonaws.com";
+  static const String basePath = "/dev/api";
+  static const String baseUrl = "$domain$basePath";
+
 
   // Auth
   static const String signIn = "$baseUrl/auth/mobile-app-login";

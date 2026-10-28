@@ -176,9 +176,9 @@ class _TotpCodeView extends StatelessWidget {
                       AppColors.orange,
                       AppColors.teal,
                     ] : [
-                      AppColors.teal.withValues(alpha: 0.4),
                       AppColors.teal.withValues(alpha: 0.85),
                       AppColors.teal,
+                      const Color(0xFF80CBC4),
                     ],
                   ).createShader(bounds),
                   child: LinearProgressIndicator(

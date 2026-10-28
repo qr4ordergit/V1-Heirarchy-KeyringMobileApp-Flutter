@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 Color primaryColor = const Color(0xFF6D28D9);
-// Color primaryColor = const Color(0xff778bff);
 
 String redirectUrl = "https://messaging.thenodeai.com/#/";
 
@@ -25,7 +24,6 @@ String retry = "Retry";
 String twoFaEnabled = "2FA Enabled";
 String aboutTOTP = "About TOTP";
 String totpDes = "TOTP (Time-based One-Time Password) generates a new 6-digit code every 30 seconds. Use this code when asked during 2FA verification.";
-// String authenticationCode = "AUTHENTICATION CODE";
 String authenticationCode = "Authentication Code";
 String secretKeyIsUnavailable = "Secret key is unavailable'";
 String unableToGenerateOtp = "Unable to generate OTP";
