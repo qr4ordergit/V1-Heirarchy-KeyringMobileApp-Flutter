@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keyring/presentation/screens/dashboard/keyring/keyring_details_screen.dart';
+import '../../data/models/keyring/keyring_model.dart';
 import '../../presentation/screens/auth/sign_in_screen.dart';
 import '../../presentation/screens/dashboard/keyring/keyring_screen.dart';
 
@@ -11,11 +12,16 @@ class AppRoutes {
   static const String keyringDetails = '/keyring-details';
 
   static Map<String, WidgetBuilder> routes = {
-
     signIn: (context) => const SignInScreen(),
-
     keyring: (context) => KeyringScreen(),
 
-    keyringDetails: (context) => const KeyringDetailsScreen(),
+    keyringDetails: (context) {
+      final args = ModalRoute.of(context)!.settings.arguments
+      as Map<String, dynamic>;
+
+      return KeyringDetailsScreen(
+        keyringData: args['keyringData'] as KeyringData,
+      );
+    },
   };
 }

@@ -26,7 +26,6 @@ class _NotificationWidgetState extends State<NotificationWidget> {
         AcceptRejectKeyringRequest(
           requestId: requestId,
           keyringCategoryId: keyringCategoryId,
-          interval: context.read<KeyringBloc>().state.interval,
           action: isAccept ? 'accepted' : 'rejected',
         ));
   }

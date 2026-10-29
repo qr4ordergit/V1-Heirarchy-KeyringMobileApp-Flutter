@@ -18,6 +18,7 @@ class IconWidget extends StatelessWidget {
     this.paddingAll,
     this.iconSize,
     this.backgroundColor,
+    this.borderColor,
     this.radius,
     this.tooltip,
   });
@@ -26,6 +27,7 @@ class IconWidget extends StatelessWidget {
   final IconData icon;
   final Color? iconColor;
   final Color? backgroundColor;
+  final Color? borderColor;
   final double? paddingAll;
   final double paddingLeft;
   final double paddingRight;
@@ -56,6 +58,7 @@ class IconWidget extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
+          border: borderColor != null ? Border.all(color: borderColor!, width:0.9) : null,
           borderRadius: BorderRadius.circular(radius ?? 0),
         ),
         padding: _padding,

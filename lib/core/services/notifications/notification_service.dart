@@ -48,12 +48,11 @@ class NotificationService {
       final data = message.data;
       log('Foreground notification: $data');
 
-      final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
-        data: message.data,
-      );
-
+      // final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
+      //   data: message.data,
+      // );
       // Show/Hide Notification
-      if (handledOnKeyring) return;
+      // if (handledOnKeyring) return;
 
       if (Platform.isIOS) {
         foregroundMessage(); // iOS shows it natively

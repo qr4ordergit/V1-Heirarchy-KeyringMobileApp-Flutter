@@ -7,7 +7,6 @@ import 'package:keyring/core/config/app_config.dart';
 import 'package:keyring/core/constants/app_colors.dart';
 import 'package:keyring/core/device/device_utility.dart';
 import 'package:keyring/core/enums/enums.dart';
-import 'package:keyring/core/formatters/date_formatter.dart';
 import 'package:keyring/core/routes/app_routes.dart';
 import 'package:keyring/core/services/sheet_service.dart';
 import 'package:keyring/core/storage/local_storage_service.dart';
@@ -19,6 +18,7 @@ import 'package:keyring/presentation/screens/settings/widgets/settings_widget.da
 import '../../../../core/common_widgets/text_form_field_widget.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../bloc/keyring/keyring_state.dart';
+import 'widgets/totp_list_code_widget.dart';
 
 class KeyringScreen extends StatefulWidget {
   const KeyringScreen({super.key});
@@ -62,12 +62,28 @@ class _KeyringScreenState extends State<KeyringScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
           children: [
-            Text(appName, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm - 1)),
-            if(_localStorageService.getString(StorageKeys.targetUserId) != null)
-              Text(_localStorageService.getString(StorageKeys.targetUserId)!, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis),
+            IconWidget(
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+              radius: Sizes.borderRadiusLg,
+              icon: Iconsax.security_copy,
+              iconColor: AppColors.light,
+              paddingAll: Sizes.sm,
+              borderColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+            ),
+            SizedBox(width: Sizes.sm),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(appName, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontSize: Sizes.fontSizeSm - 1)),
+                  if(_localStorageService.getString(StorageKeys.targetUserId) != null)
+                    Text(_localStorageService.getString(StorageKeys.targetUserId)!, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 1), maxLines: 1, overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
           ],
         ),
         actions: [
@@ -135,25 +151,50 @@ class _KeyringScreenState extends State<KeyringScreen> {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: Sizes.md - 4),
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamed(context, AppRoutes.keyringDetails, arguments: keyring),
+                                  onTap: () => Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.keyringDetails,
+                                    arguments: {
+                                      'keyringData': keyring,
+                                    },
+                                  ),
                                   child: Container(
                                     padding: EdgeInsets.symmetric(vertical: Sizes.md, horizontal: Sizes.sm),
                                     decoration: BoxDecoration(
                                         color: Theme.of(context).cardColor,
-                                        // border: Border.all(color: AppColors.greyShade.withValues(alpha: 0.1)),
-                                        borderRadius: BorderRadius.circular(Sizes.borderRadiusLg)
+                                        borderRadius: BorderRadius.circular(Sizes.borderRadiusLg),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: is2Factor
+                                            ? [
+                                          const Color(0xFF111B27),
+                                          const Color(0xFF101B24),
+                                          const Color(0xFF123027),
+                                        ]
+                                            : [
+                                          const Color(0xFF151A27),
+                                          const Color(0xFF101521),
+                                        ],
+                                      ),
+                                      border: Border.all(
+                                        color: is2Factor
+                                            ? const Color(0xFF064B40).withValues(alpha: 0.7)
+                                            : AppColors.greyShade,
+                                      ),
                                     ),
                                     child: Column(
                                       children: [
                                         Row(
                                           children: [
                                             IconWidget(
-                                              backgroundColor: is2Factor ? AppColors.green.withValues(alpha: 0.1) : Theme.of(context).primaryColor.withValues(alpha: 0.2),
-                                              radius: Sizes.borderRadiusMd,
+                                              backgroundColor: is2Factor ? AppColors.green.withValues(alpha: 0.15) : Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                                              radius: Sizes.borderRadiusLg,
                                               icon: is2Factor ? Iconsax.lock_copy : Iconsax.key_copy,
-                                              iconColor: is2Factor ? Color.lerp(AppColors.green, Colors.white, 0.4) : AppColors.light,
+                                              iconColor: is2Factor ? AppColors.lightGreen : AppColors.light,
                                               paddingAll: Sizes.md - 2,
                                               iconSize: Sizes.iconSm,
+                                              borderColor: is2Factor ? AppColors.lightGreen :  Theme.of(context).primaryColor.withValues(alpha: 0.3),
                                             ),
 
                                             SizedBox(width: Sizes.sm),
@@ -166,7 +207,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                                   SizedBox(height: Sizes.xs/2),
                                                   Text(
                                                     is2Factor
-                                                        ? encrypted$TwoFa
+                                                        ? '• $encryptedTwoFa'
                                                         : keyring.keyringCategoryPasswords!.length <= 1
                                                         ? '${keyring.keyringCategoryPasswords!.length} $password'
                                                         : '${keyring.keyringCategoryPasswords!.length} $passwords',
@@ -182,9 +223,30 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                                 ],
                                               ),
                                             ),
-                                            IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
+                                            IconWidget(
+                                              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                                              radius: Sizes.circularRadius,
+                                              icon: Iconsax.arrow_right_3_copy,
+                                              iconColor: AppColors.light,
+                                              paddingAll: Sizes.xs,
+                                              iconSize: Sizes.iconSm - 1,
+                                              borderColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                                            ),
+                                            // IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
                                           ],
                                         ),
+
+                                        if (is2Factor) ...[
+
+                                          SizedBox(height: Sizes.xs),
+                                          DeviceUtility.divider(color: AppColors.greyShade),
+                                          TotpListCodeWidget(
+                                            key: ValueKey(keyring.id),
+                                            secretKey: keyring.secretKey!,
+                                            keyringCategoryId: keyring.id!,
+                                          ),
+                                        ],
+
                                         // SizedBox(height: Sizes.sm),
                                         // Align(
                                         //     alignment: Alignment.bottomRight,

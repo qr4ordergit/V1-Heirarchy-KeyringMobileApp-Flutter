@@ -6,8 +6,8 @@ class GetKeyringDetailsEvent extends KeyringEvent {}
 
 class GetKeyringPasswordEvent extends KeyringEvent {
   final String keyringCategoryId;
-  final String otp;
-  GetKeyringPasswordEvent({required this.keyringCategoryId, required this.otp});
+  final String secretKey;
+  GetKeyringPasswordEvent({required this.keyringCategoryId, required this.secretKey});
 }
 
 class ResetKeyringActionEvent extends KeyringEvent {
@@ -30,13 +30,11 @@ class AcceptRejectKeyringRequest extends KeyringEvent {
   final String keyringCategoryId;
   final String action;
   final String requestId;
-  final int interval;
 
   AcceptRejectKeyringRequest({
     required this.keyringCategoryId,
     required this.action,
     required this.requestId,
-    required this.interval,
 });
 }
 

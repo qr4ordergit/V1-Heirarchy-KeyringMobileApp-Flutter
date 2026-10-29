@@ -33,7 +33,8 @@ class AppColors  {
   static const textDark    = Color(0xFF1A3A5C);
   static const textLight   = Color(0xFF2C5282);
 
-  static final teal = Color(0xFF00BFA5);
+  // static final teal = Color(0xFF00BFA5);
   static final greyShade = grey.withValues(alpha: 0.2);
+  static final lightGreen = Color.lerp(AppColors.green, Colors.white, 0.4);
 
 }

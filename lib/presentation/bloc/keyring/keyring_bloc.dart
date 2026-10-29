@@ -21,7 +21,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
   KeyringBloc({required this.keyringRepository, required this.totpRepository, required this.localStorageService}) : super(KeyringState()) {
     on<GetKeyringDetailsEvent>(_onKeyringDetails);
-    on<GetKeyringPasswordEvent>(_onKeyringPassword);
+    on<GetKeyringPasswordEvent>(_onGetKeyringPasswords);
     on<ResetKeyringActionEvent>(_onKeyringReset);
     on<KeyringCategorySearchEvent>(_onKeyringCategorySearch);
 
@@ -152,11 +152,13 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       }
 
       // Generate a fresh OTP when Accept or Reject is tapped.
-      final otp = totpRepository.generateCode(
-        secretKey: secretKey,
-        interval: event.interval,
-        digits: TotpCubit.digits,
-      );
+      // final otp = totpRepository.generateCode(
+      //   secretKey: secretKey,
+      //   interval: event.interval,
+      //   digits: TotpCubit.digits,
+      // );
+
+      String otp = _generateCode(secretKey: secretKey);
 
       final data = {
         'request_id': event.requestId,
@@ -193,9 +195,9 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       ));
     }
   }
+  // Notification Section End
 
   Future<void> _onKeyringReset(ResetKeyringActionEvent event, Emitter<KeyringState> emit) async {
-    // totpRepository.removeOtp(event.keyringCategoryId);
     final updatedList = state.originalKeyringData.map((keyring) {
       if (keyring.id == event.keyringCategoryId) {
         return keyring.copyWith(
@@ -213,8 +215,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     ));
 
   }
-
-  // Notification Section End
 
   Future<void> _onKeyringDetails(GetKeyringDetailsEvent event, Emitter<KeyringState> emit) async {
     emit(state.copyWith(apiStatus: ApiStatus.loading));
@@ -242,14 +242,16 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     emit(state.copyWith(searchQuery: event.query));
   }
 
-  Future<void> _onKeyringPassword(GetKeyringPasswordEvent event, Emitter<KeyringState> emit) async {
+  Future<void> _onGetKeyringPasswords(GetKeyringPasswordEvent event, Emitter<KeyringState> emit) async {
     emit(state.copyWith(
       apiActionStatus: ApiStatus.loading,
       verifiedKeyringCategoryId: event.keyringCategoryId,
     ));
     try {
+      String otp = _generateCode(secretKey: event.secretKey);
+
       final response = await keyringRepository.getKeyringPassword(
-          keyringCategoryId: event.keyringCategoryId, otp: event.otp
+          keyringCategoryId: event.keyringCategoryId, otp: otp
       );
 
       final data = response['data'];
@@ -282,6 +284,22 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       log("Error On Get Keyring Password: $e");
       emit(state.copyWith(apiActionStatus: ApiStatus.failure, actionErrorMessage: e.toString()));
     }
+  }
+
+  String _generateCode({required String secretKey}) {
+
+    if (secretKey.isEmpty) {
+      throw Exception(secretKeyIsUnavailable);
+    }
+    if (state.interval <= 0) {
+      throw Exception(unableToGenerateOtp);
+    }
+
+    return totpRepository.generateCode(
+      secretKey: secretKey,
+      interval: state.interval,
+      digits: TotpCubit.digits,
+    );
   }
 
 
