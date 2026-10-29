@@ -48,6 +48,7 @@ String enterInterval = "Enter interval in seconds";
 String update = "Update";
 String seconds = "seconds";
 String refreshesIn = "Refreshes in";
+String requestExpiredMsg = "Your request has expired.";
 String things = "";
 
 

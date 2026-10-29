@@ -173,14 +173,10 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                           const Color(0xFF123027),
                                         ]
                                             : [
-                                          const Color(0xFF151A27),
-                                          const Color(0xFF101521),
+                                          Color(0xFF151A27),
+                                          Color(0xFF101521),
+                                          Color(0xFF1B2333),
                                         ],
-                                      ),
-                                      border: Border.all(
-                                        color: is2Factor
-                                            ? const Color(0xFF064B40).withValues(alpha: 0.7)
-                                            : AppColors.greyShade,
                                       ),
                                     ),
                                     child: Column(
@@ -224,13 +220,13 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                               ),
                                             ),
                                             IconWidget(
-                                              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                                              backgroundColor: is2Factor ? AppColors.green.withValues(alpha: 0.15) : Theme.of(context).primaryColor.withValues(alpha: 0.2),
                                               radius: Sizes.circularRadius,
                                               icon: Iconsax.arrow_right_3_copy,
                                               iconColor: AppColors.light,
                                               paddingAll: Sizes.xs,
                                               iconSize: Sizes.iconSm - 1,
-                                              borderColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+                                              borderColor: is2Factor ? AppColors.green.withValues(alpha: 0.14) : Theme.of(context).primaryColor.withValues(alpha: 0.3),
                                             ),
                                             // IconWidget(icon: Iconsax.arrow_circle_right_copy, paddingAll: Sizes.xs)
                                           ],

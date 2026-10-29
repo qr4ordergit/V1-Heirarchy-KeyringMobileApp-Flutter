@@ -33,73 +33,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     on<UpdateIntervalEvent>(_onUpdateInterval);
   }
 
-  Future<void> _onLoadSavedInterval(LoadSavedIntervalEvent event, Emitter<KeyringState> emit) async {
-    // final savedInterval = localStorageService.getInt(StorageKeys.interval);
-    // log("savedInterval: $savedInterval");
-
-    // if(savedInterval != null) {
-    //   emit(state.copyWith(interval: savedInterval));
-    // }else {
-      add(GetIntervalEvent());
-    // }
-  }
-
-
-  Future<void> _onGetInterval(GetIntervalEvent event, Emitter<KeyringState> emit) async {
-    emit(state.copyWith(
-      intervalStatus: ApiStatus.loading,
-      intervalUpdateStatus: ApiStatus.initial,
-    ));
-    try {
-      final response = await keyringRepository.getInterval();
-      // {"success":true,"data":{"custom_totp_validity":120}}
-
-      final int interval = (response['data']?['custom_totp_validity'] as num?)?.toInt() ?? 0;
-
-      await localStorageService.saveInt(StorageKeys.interval, interval);
-
-      emit(state.copyWith(
-        interval: interval,
-        intervalStatus: ApiStatus.success,
-      ));
-
-    }catch(e) {
-      log("Error On Get Interval: $e");
-      emit(state.copyWith(intervalStatus: ApiStatus.failure, intervalMessage: e.toString()));
-    }
-  }
-
-  Future<void> _onUpdateInterval(UpdateIntervalEvent event, Emitter<KeyringState> emit) async {
-    emit(state.copyWith(
-        interval: event.interval,
-        intervalUpdateStatus: ApiStatus.loading
-    ));
-
-    try {
-      var data = {
-        "custom_totp_validity": event.interval,
-      };
-
-      final response = await keyringRepository.updateInterval(
-        data: data,
-      );
-
-      await localStorageService.saveInt(StorageKeys.interval, event.interval);
-
-      emit(state.copyWith(
-        interval: event.interval,
-        intervalMessage: response["message"],
-        intervalUpdateStatus: ApiStatus.success,
-      ));
-    } catch (e) {
-      log('Error on Update Interval: $e');
-      emit(state.copyWith(
-        intervalMessage: e.toString(),
-        intervalUpdateStatus: ApiStatus.failure,
-      ));
-    }
-  }
-
   // Notification Section Start
   void _onAddPayload(AddNotificationPayloadEvent event, Emitter<KeyringState> emit) {
     final payload = event.payload;
@@ -151,14 +84,7 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
         return;
       }
 
-      // Generate a fresh OTP when Accept or Reject is tapped.
-      // final otp = totpRepository.generateCode(
-      //   secretKey: secretKey,
-      //   interval: event.interval,
-      //   digits: TotpCubit.digits,
-      // );
-
-      String otp = _generateCode(secretKey: secretKey);
+      final otp = _generateCode(secretKey: secretKey);
 
       final data = {
         'request_id': event.requestId,
@@ -168,8 +94,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       };
 
       await keyringRepository.acceptRejectKeyringRequest(data: data);
-
-      await NotificationService.clearSpecificNotification(id: event.requestId);
 
       final updatedRequests = state.pendingRequests
           .where((request) => request.id != event.requestId)
@@ -181,11 +105,27 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
         pendingRequests: updatedRequests,
       ));
     } on NotFoundException catch (e) {
-      emit(state.copyWith(
-        requestStatus: ApiStatus.failure,
-        clearLoading: true,
-        actionErrorMessage: e.toString(),
-      ));
+      if(e.data["message"] == "Access request not found") {
+
+        final updatedRequests = state.pendingRequests
+            .where((request) => request.id != event.requestId)
+            .toList();
+
+        emit(state.copyWith(
+          pendingRequests: updatedRequests,
+          requestStatus: ApiStatus.failure,
+          clearLoading: true,
+          actionErrorMessage: requestExpiredMsg,
+        ));
+
+      }else {
+        emit(state.copyWith(
+          requestStatus: ApiStatus.failure,
+          clearLoading: true,
+          actionErrorMessage: e.toString(),
+        ));
+      }
+
     } catch (e) {
       log('Error on Accept/Reject: $e');
       emit(state.copyWith(
@@ -193,6 +133,8 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
         clearLoading: true,
         actionErrorMessage: e.toString(),
       ));
+    }finally {
+      await NotificationService.clearSpecificNotification(id: event.requestId);
     }
   }
   // Notification Section End
@@ -286,7 +228,67 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     }
   }
 
+  Future<void> _onLoadSavedInterval(LoadSavedIntervalEvent event, Emitter<KeyringState> emit) async {
+    add(GetIntervalEvent());
+  }
+
+  Future<void> _onGetInterval(GetIntervalEvent event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(
+      intervalStatus: ApiStatus.loading,
+      intervalUpdateStatus: ApiStatus.initial,
+    ));
+    try {
+      final response = await keyringRepository.getInterval();
+      // {"success":true,"data":{"custom_totp_validity":120}}
+
+      final int interval = (response['data']?['custom_totp_validity'] as num?)?.toInt() ?? 0;
+
+      await localStorageService.saveInt(StorageKeys.interval, interval);
+
+      emit(state.copyWith(
+        interval: interval,
+        intervalStatus: ApiStatus.success,
+      ));
+
+    }catch(e) {
+      log("Error On Get Interval: $e");
+      emit(state.copyWith(intervalStatus: ApiStatus.failure, intervalMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateInterval(UpdateIntervalEvent event, Emitter<KeyringState> emit) async {
+    emit(state.copyWith(
+        interval: event.interval,
+        intervalUpdateStatus: ApiStatus.loading
+    ));
+
+    try {
+      var data = {
+        "custom_totp_validity": event.interval,
+      };
+
+      final response = await keyringRepository.updateInterval(
+        data: data,
+      );
+
+      await localStorageService.saveInt(StorageKeys.interval, event.interval);
+
+      emit(state.copyWith(
+        interval: event.interval,
+        intervalMessage: response["message"],
+        intervalUpdateStatus: ApiStatus.success,
+      ));
+    } catch (e) {
+      log('Error on Update Interval: $e');
+      emit(state.copyWith(
+        intervalMessage: e.toString(),
+        intervalUpdateStatus: ApiStatus.failure,
+      ));
+    }
+  }
+
   String _generateCode({required String secretKey}) {
+    // Generate a fresh OTP when Accept or Reject is tapped.
 
     if (secretKey.isEmpty) {
       throw Exception(secretKeyIsUnavailable);
@@ -301,8 +303,6 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
       digits: TotpCubit.digits,
     );
   }
-
-
 
 
 }

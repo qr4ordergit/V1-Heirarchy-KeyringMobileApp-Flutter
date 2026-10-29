@@ -1,6 +1,5 @@
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import '../../main.dart';
-import '../common_widgets/icon_widget.dart';
 import '../config/app_config.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
@@ -24,7 +23,8 @@ class SnackBars {
 
     return DelightToastBar(
       builder: (context) => ToastCard(
-        color: messageType == MessageType.error ? AppColors.red : Theme.of(context).primaryColor,
+        color: Theme.of(context).primaryColor,
+        // color: messageType == MessageType.error ? AppColors.red : Theme.of(context).primaryColor,
         leading: Icon(
           icon == null
               ? messageType == MessageType.success

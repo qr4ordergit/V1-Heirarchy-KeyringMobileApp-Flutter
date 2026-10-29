@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import '../../../../../core/common_widgets/icon_widget.dart';
-import '../../../../../core/config/app_config.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/enums/enums.dart';
@@ -95,10 +94,19 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   padding: EdgeInsets.all(Sizes.md),
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(
-                      Sizes.borderRadiusLg,
+                    borderRadius: BorderRadius.circular(Sizes.borderRadiusLg),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF111B27),
+                        const Color(0xFF123021),
+                        const Color(0xFF123027),
+                      ]
+
                     ),
                   ),
+
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

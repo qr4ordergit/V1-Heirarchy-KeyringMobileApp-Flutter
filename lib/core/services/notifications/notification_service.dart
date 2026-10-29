@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'notification_controller.dart';
-import '../../../data/models/notifications/notification_payload.dart';
 import 'notification_display.dart';
 import 'notification_navigation_handler.dart';
 import 'request_notification_ids.dart';
@@ -48,9 +47,10 @@ class NotificationService {
       final data = message.data;
       log('Foreground notification: $data');
 
-      // final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
-      //   data: message.data,
-      // );
+      final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
+        data: message.data,
+      );
+
       // Show/Hide Notification
       // if (handledOnKeyring) return;
 

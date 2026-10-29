@@ -10,12 +10,11 @@ class NotificationChannels {
     importance: NotificationImportance.Max,
     playSound: true,
     channelShowBadge: true,
-    // soundSource: 'resource://raw/res_notification_sound', // no file extension
   );
 
   static Future<void> initAwesome() async {
     await AwesomeNotifications().initialize(
-      'resource://drawable/ic_notification',
+      'resource://mipmap/launcher_icon',
       [highImportance],
       debug: true,
     );

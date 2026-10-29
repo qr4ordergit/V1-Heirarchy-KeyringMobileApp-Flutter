@@ -19,8 +19,9 @@ class NotificationDisplay {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: RequestNotificationIds.fromRequestId(requestId),
-        // id: (message.messageId ?? DateTime.now().toString()).hashCode & 0x7FFFFFFF,
         channelKey: NotificationChannels.highImportanceKey,
+        // title: data['title'],
+        // body: data['body'],
         title: notification?.title ?? data['title'],
         body: notification?.body ?? data['body'],
         payload: Map<String, String>.from(
@@ -29,6 +30,19 @@ class NotificationDisplay {
           ),
         ),
       ),
+      // actionButtons: [
+      //   NotificationActionButton(
+      //     key: 'ACCEPT',
+      //     label: 'Accept',
+      //     actionType: ActionType.SilentBackgroundAction,
+      //   ),
+      //   NotificationActionButton(
+      //     key: 'REJECT',
+      //     label: 'Reject',
+      //     actionType: ActionType.SilentBackgroundAction,
+      //     isDangerousOption: true,
+      //   ),
+      // ],
     );
   }
 }
