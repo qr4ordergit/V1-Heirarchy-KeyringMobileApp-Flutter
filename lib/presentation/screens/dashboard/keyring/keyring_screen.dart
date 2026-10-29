@@ -190,6 +190,7 @@ class _KeyringScreenState extends State<KeyringScreen> {
                                         //     alignment: Alignment.bottomRight,
                                         //     child: Text(DateFormatter.formatDate(keyring.createdOn.toString()), style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: Sizes.fontSizeXs - 2), maxLines: 1, overflow: TextOverflow.ellipsis,)
                                         // ),
+
                                       ],
                                     ),
                                   ),

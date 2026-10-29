@@ -55,7 +55,6 @@ class _KeyringDetailsScreenState extends State<KeyringDetailsScreen> {
                   // TOTP Section Start
                   if(isTOTP)
                     TotpCodeWidget(secretKey: keyring.secretKey!, keyringCategoryId: keyring.id!),
-                    // TotpCodeWidget(secretKey: "xjkjljjfksjdf dfsdjlk ", keyringCategoryId: "dxd"),
                   // TOTP Section End
 
                   if (keyring.keyringCategoryPasswords?.isNotEmpty == true)
