@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Color primaryColor = const Color(0xFF6D28D9);
 
-String redirectUrl = "https://messaging.thenodeai.com/#/";
+// String redirectUrl = "https://messaging.thenodeai.com/#/";
 
 String appId = "com.keyring.messaging";
 String appName = "Keyring Safe";

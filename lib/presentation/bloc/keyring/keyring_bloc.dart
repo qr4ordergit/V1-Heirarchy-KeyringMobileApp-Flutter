@@ -47,11 +47,10 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
     );
 
     if (alreadyExists) return;
-
     final AccessRequest newRequest  = AccessRequest(
         id: payload.requestId,
         keyringCategoryId: payload.keyringCategoryId,
-        accessUsername: payload.keyringCategoryName
+        accessUsername: payload.requestId?.split("#").first,
     );
 
     emit(state.copyWith(

@@ -53,9 +53,9 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<void> logout({bool isAllDevice = false}) async {
     try {
       await apiService.post(url: ApiConstants.logout,
-          queryParameters: {
-          "redirect_uri": redirectUrl
-          },
+          // queryParameters: {
+          // "redirect_uri": redirectUrl
+          // },
           data: {
             "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
             if (!isAllDevice)

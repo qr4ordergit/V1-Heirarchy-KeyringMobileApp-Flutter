@@ -93,10 +93,11 @@ class _TotpListCodeView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconWidget(
-                            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                            borderColor: AppColors.green.withValues(alpha: 0.14),
+                            backgroundColor: AppColors.green.withValues(alpha: 0.15),
                             radius: Sizes.circularRadius,
+                            iconColor: AppColors.light,
                             icon: Iconsax.copy_copy,
-                            iconColor: Theme.of(context).primaryColor,
                             iconSize: Sizes.iconSm,
                             paddingAll: Sizes.sm,
                             onTap: () {
