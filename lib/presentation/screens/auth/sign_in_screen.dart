@@ -105,7 +105,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             if(state is SignInSuccess) {
                               Navigator.pushReplacementNamed(
                                 context,
-                                AppRoutes.keyring,
+                                AppRoutes.devices,
                               );
                             }else if(state is SignInFailure) {
                               SnackBars.snackMessage(context, description: state.message, messageType: MessageType.error);

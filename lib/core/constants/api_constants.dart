@@ -9,6 +9,8 @@ class ApiConstants {
   static const String signIn = "$baseUrl/auth/mobile-app-login";
   static const String logout = "$baseUrl/auth/logout";
   static const String getNewToken = "$baseUrl/auth/get_new_token";
+  static const String userSession = "$baseUrl/auth/user-session";
+
 
   // Keyring
   static const String keyring = "$baseUrl/keyring-login-get-catagories";

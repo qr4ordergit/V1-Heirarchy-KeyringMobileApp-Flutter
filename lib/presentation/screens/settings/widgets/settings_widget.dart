@@ -53,6 +53,19 @@ class SettingsWidget extends StatelessWidget {
           leading: Icon(Iconsax.message_copy, color: Theme.of(context).primaryColor),
         ),
 
+        AppListTile(
+          leading: Icon(Iconsax.mobile_copy, color: Theme.of(context).primaryColor),
+          title: manageDevices,
+          subtitle: manageDevicesSub,
+          onTap: () => Navigator.pushNamed(
+            context,
+            AppRoutes.devices,
+            arguments: {
+              'isNavigate': false,
+            },
+          ),
+          maxLines: 2,
+        ),
 
         if(isShowLogout == true)
           BlocConsumer<AuthBloc, AuthState>(

@@ -49,6 +49,21 @@ String update = "Update";
 String seconds = "seconds";
 String refreshesIn = "Refreshes in";
 String requestExpiredMsg = "Your request has expired.";
+String somethingWentWrong = "Something Went Wrong";
+String manageDevices = "Manage Devices";
+String manageDevicesSub = "View and manage devices linked to your account.";
+String signedIn = "Signed in";
+String signedInDevices = "Signed In Devices";
+String session = "session";
+String sessions = "sessions";
+String home = "Home";
+String deviceLimitAvailable= "Device Limit Available";
+String deviceLimitAvailableDescription = "You can add another device. You are within the allowed device limit.";
+String deviceLimitReached = "Device Limit Reached";
+String deviceLimitReachedDescription = "You have reached the maximum number of active devices allowed. Please log out from another device to continue.";
+String logoutAllDevices = "Log out all devices";
+String dashboard = "Dashboard";
+String active = "Active";
 String things = "";
 
 

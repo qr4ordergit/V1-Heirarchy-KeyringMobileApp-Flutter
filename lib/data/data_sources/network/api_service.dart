@@ -90,7 +90,7 @@ class ApiService {
       case 401:
         return UnauthorizedException(message: message);
       case 403:
-        return ForbiddenException(message: message);
+        return ForbiddenException(message: message, data: data);
       case 404:
         return NotFoundException(message: message, data: data);
       case 409:

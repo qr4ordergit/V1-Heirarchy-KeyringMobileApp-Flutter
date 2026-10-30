@@ -23,9 +23,12 @@ class UnauthorizedException extends ApiException {
 
 /// 403 — forbidden
 class ForbiddenException extends ApiException {
-  const ForbiddenException({super.message, super.statusCode = 403});
+  final dynamic data;
+  const ForbiddenException({
+    super.message,
+    this.data,
+    super.statusCode = 403});
 }
-
 /// 404 — not found
 class NotFoundException extends ApiException {
   final dynamic data;
