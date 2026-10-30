@@ -68,7 +68,7 @@ class AuthRepositoryImpl extends AuthRepository {
           data: {
             "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
             if (!isAllDevice)
-              "refresh_token": localStorageService.getString(StorageKeys.refreshToken),
+              "refresh_token": await secureStorageService.getRefreshToken(),
             "app_id": appId
           }
       );
@@ -92,7 +92,7 @@ class AuthRepositoryImpl extends AuthRepository {
       final response = await apiService.post(
           url: ApiConstants.userSession,
           data: {
-            "refresh_token": localStorageService.getString(StorageKeys.refreshToken),
+            "refresh_token": await secureStorageService.getRefreshToken(),
             "app_id": appId,
             "Content-Type": "application/json",
             "platform": platform,
@@ -114,7 +114,12 @@ class AuthRepositoryImpl extends AuthRepository {
   @override
   Future<DeviceModel> getDevices() async {
     try {
-      final response = await apiService.post(url: ApiConstants.userSession);
+      final response = await apiService.post(
+          url: ApiConstants.userSession,
+          data: {
+            "app_id": appId,
+          }
+      );
       return DeviceModel.fromJson(response.data);
     } on ForbiddenException catch (e) {
       final data = e.data;

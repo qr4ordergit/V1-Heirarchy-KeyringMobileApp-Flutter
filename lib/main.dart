@@ -32,10 +32,6 @@ void main() async {
   final localStorageService = await LocalStorageService.getInstance();
   final secureStorageService = SecureStorageService.instance;
 
-  // final accessToken = await secureStorageService.getAccessToken();
-  // final bool isLoggedIn = accessToken != null && accessToken.isNotEmpty;
-  // final initialRoute = isLoggedIn ? AppRoutes.keyring : AppRoutes.signIn;
-
   final accessToken = await secureStorageService.getAccessToken();
 
   final bool isLoggedIn = accessToken != null && accessToken.isNotEmpty;

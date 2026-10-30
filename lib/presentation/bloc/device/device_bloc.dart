@@ -47,7 +47,11 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
 
   // Register device
   Future<void> _registerDevice(Emitter<DeviceState> emit) async {
-    emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+    emit(state.copyWith(
+        actionLoadingStatus: LoadingStatus.initial,
+        authType: null,
+        loadingStatus: LoadingStatus.loading
+    ));
 
     try {
       final DeviceModel responseModel = await authRepository.registerDevice();
@@ -91,7 +95,9 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
 
   // Fetch all devices
   Future<void> _fetchDevices(Emitter<DeviceState> emit) async {
-    emit(state.copyWith(loadingStatus: LoadingStatus.loading));
+    emit(state.copyWith(
+      loadingStatus: LoadingStatus.loading,
+    ));
 
     try {
       final DeviceModel responseModel = await authRepository.getDevices();
