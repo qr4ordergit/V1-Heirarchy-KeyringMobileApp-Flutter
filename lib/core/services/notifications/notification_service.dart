@@ -45,7 +45,7 @@ class NotificationService {
   static void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
       final data = message.data;
-      log('Foreground notification: $data');
+      print('Foreground Notification Data: $data');
 
       final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
         data: message.data,
@@ -73,7 +73,7 @@ class NotificationService {
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      print("When User tap on notification: ${event.data}");
+      print("When User tap on Notification Data: ${event.data}");
       NotificationNavigationHandler.handleMessage(
         data: event.data,
       );

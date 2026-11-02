@@ -6,9 +6,7 @@ import 'notification_navigation_handler.dart';
 class NotificationController {
   /// Use this method to detect when the user taps on a notification or action button
   // @pragma('vm:entry-point')
-  // static Future<void> onActionReceivedMethod(
-  //     ReceivedAction receivedAction,
-  //     ) async {
+  // static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
   //   final actionKey = receivedAction.buttonKeyPressed;
   //
   //   final payload = <String, String>{

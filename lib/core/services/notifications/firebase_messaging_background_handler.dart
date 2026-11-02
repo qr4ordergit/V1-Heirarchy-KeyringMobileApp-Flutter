@@ -7,13 +7,13 @@ import 'notification_display.dart';
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("Notification On Background: ${message.data}");
+  print("Background Notification Data: ${message.data}");
+  print("Background Notification Actual Native Platform Show Payload: Title: ${message.notification?.title} || Body: ${message.notification?.body}");
 
-
-  // The background isolate has its own memory; initialize again here.
+  // Re-initialize Awesome Notifications in this isolate (channels must exist)
   // await NotificationChannels.initAwesome();
   // await NotificationDisplay.showNotification(message);
+
 }
-
-// {keyring_category_id: 12345, keyring_category_name: 2 Fact Category, body: Approve keyring?, type: message, title: New Request, request_id: sup-ironman-473#12}
-
+// Background Show Notification Native Platform: Title: sup-ironman-473 || Body: sup-ironman-473 is requesting access to: 2 Fact Category
+// It not allow to show custom data
