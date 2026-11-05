@@ -67,9 +67,9 @@ class AuthRepositoryImpl extends AuthRepository {
       await apiService.post(url: ApiConstants.logout,
           data: {
             "fcm_token": localStorageService.getString(StorageKeys.fcmToken),
+            "app_id": appId,
             if (!isAllDevice)
               "refresh_token": await secureStorageService.getRefreshToken(),
-            "app_id": appId
           }
       );
     } finally {

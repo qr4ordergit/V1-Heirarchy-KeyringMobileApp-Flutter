@@ -10,10 +10,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Background Notification Data: ${message.data}");
   print("Background Notification Actual Native Platform Show Payload: Title: ${message.notification?.title} || Body: ${message.notification?.body}");
 
-  // Re-initialize Awesome Notifications in this isolate (channels must exist)
+  // New isolate: channels must be registered again
   // await NotificationChannels.initAwesome();
   // await NotificationDisplay.showNotification(message);
-
 }
-// Background Show Notification Native Platform: Title: sup-ironman-473 || Body: sup-ironman-473 is requesting access to: 2 Fact Category
-// It not allow to show custom data

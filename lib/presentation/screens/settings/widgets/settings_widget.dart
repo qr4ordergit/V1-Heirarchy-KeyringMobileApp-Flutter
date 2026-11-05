@@ -9,7 +9,9 @@ import '../../../../core/common_widgets/icon_widget.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/device/device_utility.dart';
+import '../../../../core/enums/enums.dart';
 import '../../../../core/services/sheet_service.dart';
+import '../../../../core/snackbars/snackbars.dart';
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/auth/auth_state.dart';
@@ -69,8 +71,8 @@ class SettingsWidget extends StatelessWidget {
 
         if(isShowLogout == true)
           BlocConsumer<AuthBloc, AuthState>(
-            listener: (previous, current) {
-              if(current is LogoutSuccess || current is LogoutFailure) {
+            listener: (context, state) {
+              if(state is LogoutSuccess || state is LogoutFailure) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                     AppRoutes.signIn,

@@ -25,6 +25,7 @@ class NotificationController {
   //
   //     return;
   //   }
+  //
   //   // Normal notification tap: open the Keyring screen.
   //   NotificationNavigationHandler.handleMessage(
   //     data: payload,
