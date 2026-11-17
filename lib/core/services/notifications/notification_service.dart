@@ -45,7 +45,7 @@ class NotificationService {
   static void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
       final data = message.data;
-      print('Keyring Foreground Notification Data: $data');
+      log('Keyring Foreground Notification Data: $data');
 
       final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
         data: message.data,
@@ -73,7 +73,7 @@ class NotificationService {
     }
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      print("When User tap on Notification Data: ${event.data}");
+      log("When User tap on Notification Data: ${event.data}");
       NotificationNavigationHandler.handleMessage(
         data: event.data,
       );
@@ -92,7 +92,7 @@ class NotificationService {
     try {
       return await messaging.getToken();
     } catch (e) {
-      print("Error fetching FCM token: $e");
+      log("Error fetching FCM token: $e");
       return null;
     }
   }
