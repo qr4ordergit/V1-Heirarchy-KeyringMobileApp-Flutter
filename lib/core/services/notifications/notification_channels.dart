@@ -10,6 +10,7 @@ class NotificationChannels {
     importance: NotificationImportance.Max,
     playSound: true,
     channelShowBadge: true,
+    enableVibration: true,
   );
 
   static Future<void> initAwesome() async {

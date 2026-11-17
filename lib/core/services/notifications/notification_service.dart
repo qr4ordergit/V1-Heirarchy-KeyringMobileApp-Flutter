@@ -45,7 +45,7 @@ class NotificationService {
   static void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
       final data = message.data;
-      print('Foreground Notification Data: $data');
+      print('Keyring Foreground Notification Data: $data');
 
       final handledOnKeyring = NotificationNavigationHandler.handleForegroundMessage(
         data: message.data,
