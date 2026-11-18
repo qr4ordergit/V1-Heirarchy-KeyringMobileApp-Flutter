@@ -8,7 +8,6 @@ import 'package:keyring/core/storage/local_storage_service.dart';
 import 'package:keyring/core/storage/storage_keys.dart';
 import 'package:keyring/domain/repositories/keyring/keyring_repository.dart';
 import 'package:keyring/domain/repositories/totp/totp_repository.dart';
-import '../../../data/models/notifications/notification_payload.dart';
 import '../../../data/models/keyring/keyring_model.dart';
 import '../../cubit/totp/totp_cubit.dart';
 import 'keyring_event.dart';
@@ -127,11 +126,25 @@ class KeyringBloc extends Bloc<KeyringEvent, KeyringState> {
 
     } catch (e) {
       log('Error on Accept/Reject: $e');
-      emit(state.copyWith(
-        requestStatus: ApiStatus.failure,
-        clearLoading: true,
-        actionErrorMessage: e.toString(),
-      ));
+      if(e.toString() == "Action cannot be performed. Request is already rejected.") {
+        final updatedRequests = state.pendingRequests
+            .where((request) => request.id != event.requestId)
+            .toList();
+
+        emit(state.copyWith(
+          pendingRequests: updatedRequests,
+          requestStatus: ApiStatus.failure,
+          clearLoading: true,
+          actionErrorMessage: e.toString(),
+        ));
+      }else {
+        emit(state.copyWith(
+          requestStatus: ApiStatus.failure,
+          clearLoading: true,
+          actionErrorMessage: e.toString(),
+        ));
+      }
+
     }finally {
       await NotificationService.clearSpecificNotification(id: event.requestId);
     }
