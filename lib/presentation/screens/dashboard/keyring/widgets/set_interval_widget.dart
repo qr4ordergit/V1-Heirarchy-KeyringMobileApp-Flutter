@@ -113,7 +113,24 @@ class _SetIntervalWidgetState extends State<SetIntervalWidget> {
                     hintText: enterInterval,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (value) => (value == null || value.isEmpty) ? enterInterval : null,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return enterInterval;
+                      }
+
+                      final interval = int.tryParse(value);
+
+                      if (interval == null) {
+                        return enterValidInterval;
+                      }
+
+                      if (interval > 200) {
+                        return intervalErrorMsg;
+                      }
+
+                      return null;
+                    },
+                    // validator: (value) => (value == null || value.isEmpty) ? enterInterval : null,
                   ),
 
                   SizedBox(height: Sizes.md),
