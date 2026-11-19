@@ -24,6 +24,7 @@ class SetIntervalWidget extends StatefulWidget {
 }
 
 class _SetIntervalWidgetState extends State<SetIntervalWidget> {
+  final _formKey = GlobalKey<FormState>();
   final _intervalCtr = TextEditingController();
 
   late final KeyringBloc _keyringBloc;
@@ -43,7 +44,7 @@ class _SetIntervalWidgetState extends State<SetIntervalWidget> {
   }
 
   void _onSubmit() {
-    if(_intervalCtr.text.trim().isEmpty) return;
+    if (!_formKey.currentState!.validate()) return;
 
     _keyringBloc.add(UpdateIntervalEvent(interval: int.parse(_intervalCtr.text)));
   }
@@ -99,54 +100,51 @@ class _SetIntervalWidgetState extends State<SetIntervalWidget> {
             }
           },
             builder: (context, state) {
-              // if (state.intervalStatus == ApiStatus.loading) {
-              //   return Center(child: DeviceUtility.loadingWidget());
-              // }
+              return Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormFieldWidget(
+                      controller: _intervalCtr,
+                      prefixIcon: Iconsax.clock_copy,
+                      hintText: enterInterval,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        // LengthLimitingTextInputFormatter(3),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return enterInterval;
+                        }
 
-            // if(state.intervalStatus == ApiStatus.success) {
+                        final interval = int.tryParse(value);
 
-              return Column(
-                children: [
-                  TextFormFieldWidget(
-                    controller: _intervalCtr,
-                    prefixIcon: Iconsax.clock_copy,
-                    hintText: enterInterval,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return enterInterval;
-                      }
+                        if (interval == null) {
+                          return enterValidInterval;
+                        }
 
-                      final interval = int.tryParse(value);
+                        if (interval > 200) {
+                          return intervalErrorMsg;
+                        }
 
-                      if (interval == null) {
-                        return enterValidInterval;
-                      }
-
-                      if (interval > 200) {
-                        return intervalErrorMsg;
-                      }
-
-                      return null;
-                    },
-                    // validator: (value) => (value == null || value.isEmpty) ? enterInterval : null,
-                  ),
-
-                  SizedBox(height: Sizes.md),
-
-                  Center(
-                    child: ButtonWidget(
-                      label: update,
-                      icon: Iconsax.tick_circle_copy,
-                      isLoading: state.intervalUpdateStatus == ApiStatus.loading,
-                      onPressed: _onSubmit,
+                        return null;
+                      },
                     ),
-                  ),
-                ],
+
+                    SizedBox(height: Sizes.md),
+
+                    Center(
+                      child: ButtonWidget(
+                        label: update,
+                        icon: Iconsax.tick_circle_copy,
+                        isLoading: state.intervalUpdateStatus == ApiStatus.loading,
+                        onPressed: _onSubmit,
+                      ),
+                    ),
+                  ],
+                ),
               );
-            // }
-            // return SizedBox.shrink();
 
             }
         ),
